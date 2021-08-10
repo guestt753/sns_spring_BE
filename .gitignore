@@ -5,6 +5,9 @@
 /BoardWeb1
 /Servers
 
+###properties file###
+*.properties
+
 ### Eclipse ###
 .metadata
 bin/
