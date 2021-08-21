@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.my.sns.friend.FriendListEntity;
 import com.my.sns.friend.FriendRequestListEntity;
-import com.my.sns.service.security.UserDbService;
+import com.my.sns.security.service.UserDbService;
 
 public interface UserService extends UserDbService {
 

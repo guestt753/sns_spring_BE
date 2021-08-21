@@ -1,4 +1,4 @@
-package com.my.sns.service.security;
+package com.my.sns.security.entity;
 
 public class UserEntity {
     private String loginUserId;

@@ -14,7 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import com.my.sns.friend.FriendListEntity;
 import com.my.sns.friend.FriendRequestListEntity;
-import com.my.sns.service.security.UserEntity;
+import com.my.sns.security.controller.dto.TokenDTO;
+import com.my.sns.security.entity.UserEntity;
 import com.my.sns.user.UserRoleVO;
 import com.my.sns.user.UserVO;
 import com.my.sns.user.impl.UserRoleDAO.UserRoleRowMapper;
@@ -31,8 +32,13 @@ public class UserDAO {
 //	private final String USER_INSERT = "insert into user(user_name, user_password, user_id, user_signup_type) values(?,?,?,?)";
 	private final String USER_INSERT = "insert into user(user_name, user_password, user_id, user_signup_type)" + "VALUES (:user_name, :user_password, :user_id, :user_signup_type);";
 	public  final String SELECT_ALL_BY_USERID = "SELECT * FROM user WHERE user_id = :user_id";
-	private final String USER_GET = "select * from spring_sns.user where user_id =?";
+//	private final String USER_GET = "select * from spring_sns.user where user_id =?";  aws 서버에있는 db용
+	private final String USER_GET = "select * from user where user_id =?";
 	private final String SELECT_USER_NAME_BY_SEARCH = "select * from user where user_name like concat('%', ? ,'%')";
+	private final String SELECT_REFRESH_TOKEN_BY_USERNO = "select value from refresh_token where user_no = ?;";
+	private final String UPDATE_REFRESH_TOKEN_BY_USERNO = "update refresh_token set value=? where user_no = ?;";
+	private final String DELETE_REFRESH_TOKEN_BY_USERNO = "delete from refresh_token where user_no = ?;";
+	private final String INSERT_REFRESH_TOKEN_BY_USERNO = "insert into refresh_token values (?,?);";
 	
 	
 	// CRUD 기능의 메소드 구현
@@ -60,6 +66,49 @@ public class UserDAO {
 		}
 	  }
 	  
+	  public TokenDTO getRefreshTokenByuserNo(Long userNo) {
+		  System.out.println("===> Spring JDBC로 getRefreshTokenByuserNo() 기능 처리");
+		  Object[] args = {userNo};
+		  try {
+			  return jdbcTemplate.queryForObject(SELECT_REFRESH_TOKEN_BY_USERNO, args, new RefreshTokenRowMapper());
+		  } catch (Exception e) {
+			 e.printStackTrace();
+			 return null;
+		}
+	  }
+	  
+	  public int updateRefreshToken(String token, Long userNo) {
+		  System.out.println("===> Spring JDBC로 updateRefreshToken() 기능 처리");
+		  Object[] args = {token,userNo};
+		  try {
+			  return jdbcTemplate.update(UPDATE_REFRESH_TOKEN_BY_USERNO, args);
+		  } catch (Exception e) {
+			 e.printStackTrace();
+			 return 0;
+		}
+	  }
+	  
+	  public int deleteRefreshToken(Long userNo) {
+		  System.out.println("===> Spring JDBC로 deleteRefreshToken() 기능 처리");
+		  Object[] args = {userNo};
+		  try {
+			  return jdbcTemplate.update(DELETE_REFRESH_TOKEN_BY_USERNO, args);
+		  } catch (Exception e) {
+			 e.printStackTrace();
+			 return 0;
+		}
+	  }
+
+	  public int insertRefreshToken(String token, Long userNo) {
+		  System.out.println("===> Spring JDBC로 updateRefreshToken() 기능 처리");
+		  Object[] args = {userNo,token};
+		  try {
+			  return jdbcTemplate.update(INSERT_REFRESH_TOKEN_BY_USERNO, args);
+		  } catch (Exception e) {
+			 e.printStackTrace();
+			 return 0;
+		}
+	  }
 	   
 	
 	
@@ -94,6 +143,14 @@ public class UserDAO {
 			vo.setUserIntroduction(rs.getString("USER_INTRODUCTION"));
 			vo.setUserSignupType(rs.getByte("USER_SIGNUP_TYPE"));
 			return vo;
+		}
+	}
+	
+	class RefreshTokenRowMapper implements RowMapper<TokenDTO> {
+		public TokenDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+			TokenDTO tokenDTO = new TokenDTO();
+			tokenDTO.setRefreshToken(rs.getString("VALUE"));
+			return tokenDTO;
 		}
 	}
 }

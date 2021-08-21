@@ -1,4 +1,4 @@
-package com.my.sns.service.security;
+package com.my.sns.security.controller.dto;
 
 import java.util.ArrayList;
 import java.util.List;

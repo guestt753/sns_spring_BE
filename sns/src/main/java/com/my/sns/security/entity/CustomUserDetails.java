@@ -1,4 +1,4 @@
-package com.my.sns.service.security;
+package com.my.sns.security.entity;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;

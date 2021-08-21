@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.my.sns.service.security.CustomUserDetails;
-import com.my.sns.service.security.CustomUserDetailsService;
+import com.my.sns.security.entity.CustomUserDetails;
+import com.my.sns.security.service.CustomUserDetailsService;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

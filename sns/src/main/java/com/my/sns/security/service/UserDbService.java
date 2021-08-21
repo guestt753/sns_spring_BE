@@ -1,6 +1,9 @@
-package com.my.sns.service.security;
+package com.my.sns.security.service;
 
 import java.util.List;
+
+import com.my.sns.security.entity.UserEntity;
+import com.my.sns.security.entity.UserRoleEntity;
 
 
 

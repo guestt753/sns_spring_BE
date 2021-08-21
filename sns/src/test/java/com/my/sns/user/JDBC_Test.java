@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
-import com.my.sns.service.security.UserEntity;
+import com.my.sns.security.entity.UserEntity;
 
 public class JDBC_Test {
 	

@@ -1,4 +1,4 @@
-package com.my.sns;
+package com.my.sns.security.controller;
 
 import java.io.UnsupportedEncodingException;
 

@@ -1,4 +1,4 @@
-package com.my.sns;
+package com.my.sns.security.controller;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -25,13 +25,13 @@ import com.my.sns.config.JwtProvider;
 import com.my.sns.friend.FriendListEntity;
 import com.my.sns.friend.FriendRequestListEntity;
 import com.my.sns.friend.FriendService;
-import com.my.sns.service.security.CustomUserDetails;
-import com.my.sns.service.security.JwtResponse;
-import com.my.sns.service.security.RequestResponse;
-import com.my.sns.service.security.SearchListEntity;
-import com.my.sns.service.security.UserDbService;
-import com.my.sns.service.security.UserEntity;
-import com.my.sns.service.security.UserRoleEntity;
+import com.my.sns.security.controller.dto.JwtResponse;
+import com.my.sns.security.controller.dto.RequestResponse;
+import com.my.sns.security.entity.CustomUserDetails;
+import com.my.sns.security.entity.SearchListEntity;
+import com.my.sns.security.entity.UserEntity;
+import com.my.sns.security.entity.UserRoleEntity;
+import com.my.sns.security.service.UserDbService;
 import com.my.sns.user.UserRoleVO;
 import com.my.sns.user.UserService;
 import com.my.sns.user.UserVO;

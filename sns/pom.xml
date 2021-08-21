@@ -37,11 +37,28 @@
     <version>1.0.9.RELEASE</version>
 </dependency> -->
 
-<dependency>
-	<groupId>io.jsonwebtoken</groupId>
-	<artifactId>jjwt</artifactId>
-	<version>0.9.1</version>
-</dependency>
+	<!-- <dependency>
+		<groupId>io.jsonwebtoken</groupId>
+		<artifactId>jjwt</artifactId>
+		<version>0.9.1</version>
+	</dependency> -->
+	<dependency>
+	    <groupId>io.jsonwebtoken</groupId>
+	    <artifactId>jjwt-api</artifactId>
+	    <version>0.11.2</version>
+	</dependency>
+	<dependency>
+	    <groupId>io.jsonwebtoken</groupId>
+	    <artifactId>jjwt-impl</artifactId>
+	    <version>0.11.2</version>
+	    <scope>runtime</scope>
+	</dependency>
+	<dependency>
+	    <groupId>io.jsonwebtoken</groupId>
+	    <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+	    <version>0.11.2</version>
+	    <scope>runtime</scope>
+	</dependency>
 	
 		<!-- 안드로이드통신 -->
 			<!-- JSONObject와 같은 json 객체 생성시 필요 -->

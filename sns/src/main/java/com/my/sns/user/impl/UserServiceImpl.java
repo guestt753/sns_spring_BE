@@ -8,8 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.my.sns.service.security.UserEntity;
-import com.my.sns.service.security.UserRoleEntity;
+import com.my.sns.security.entity.UserEntity;
+import com.my.sns.security.entity.UserRoleEntity;
 import com.my.sns.user.UserRoleVO;
 import com.my.sns.user.UserService;
 import com.my.sns.user.UserVO;

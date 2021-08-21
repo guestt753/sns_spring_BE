@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.my.sns.service.security.CustomUserDetailsService;
+import com.my.sns.security.service.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/", "/login.do/posts","/download").permitAll()
+        .antMatchers("/", "/login.do/posts","/download","/reissue.do/posts").permitAll()
         .anyRequest().authenticated()
         .and()
         	.exceptionHandling()

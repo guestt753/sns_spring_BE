@@ -1,4 +1,4 @@
-package com.my.sns.service.security;
+package com.my.sns.security.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.my.sns.security.entity.CustomUserDetails;
+import com.my.sns.security.entity.UserEntity;
+import com.my.sns.security.entity.UserRoleEntity;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
