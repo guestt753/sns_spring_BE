@@ -3,7 +3,7 @@ package com.my.sns.security.controller.dto;
 public class TokenDTO {
 	private String accessToken;
 	private String refreshToken;
-	private Long acessTokenExpiresIn;
+	private Long accessTokenExpiresIn;
 	private Long refreshTokenExpireIn;
 	
 	public String getAccessToken() {
@@ -18,11 +18,11 @@ public class TokenDTO {
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
-	public Long getAcessTokenExpiresIn() {
-		return acessTokenExpiresIn;
+	public Long getAccessTokenExpiresIn() {
+		return accessTokenExpiresIn;
 	}
-	public void setAcessTokenExpiresIn(Long acessTokenExpiresIn) {
-		this.acessTokenExpiresIn = acessTokenExpiresIn;
+	public void setAccessTokenExpiresIn(Long accessTokenExpiresIn) {
+		this.accessTokenExpiresIn = accessTokenExpiresIn;
 	}
 	public Long getRefreshTokenExpireIn() {
 		return refreshTokenExpireIn;

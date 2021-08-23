@@ -78,7 +78,7 @@ public class AuthService {
 				.collect(Collectors.toList());
 		
 		tokenDTO.setAccessToken(acessToken);
-		tokenDTO.setAcessTokenExpiresIn(jwtProvider.getExpireTime(acessToken));
+		tokenDTO.setAccessTokenExpiresIn(jwtProvider.getExpireTime(acessToken));
 		tokenDTO.setRefreshToken(refreshToken);
 		tokenDTO.setRefreshTokenExpireIn(jwtProvider.getExpireTime(refreshToken));
 		jwtResponse.setTokenDTO(tokenDTO);
@@ -146,7 +146,7 @@ public class AuthService {
 		}
 		String acessToken = jwtProvider.generateJwtToken(authentication); 
 		tokenDTO.setAccessToken(acessToken);
-		tokenDTO.setAcessTokenExpiresIn(jwtProvider.getExpireTime(acessToken));
+		tokenDTO.setAccessTokenExpiresIn(jwtProvider.getExpireTime(acessToken));
 		
 		// return
 		return tokenDTO;
