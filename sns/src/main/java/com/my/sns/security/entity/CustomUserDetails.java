@@ -10,6 +10,8 @@ public class CustomUserDetails implements UserDetails {
 	private Long userNo;
     private String username;
     private String password;
+    private String accessSecretKey;
+    private String refreshSecretKey;
 //    private String userId;
 //    private String userImageUrl;
 //    private String userIntroduction;
@@ -51,7 +53,23 @@ public class CustomUserDetails implements UserDetails {
         this.password = password;
     }
 
-    @Override
+    public String getAccessSecretKey() {
+		return accessSecretKey;
+	}
+
+	public void setAccessSecretKey(String accessSecretKey) {
+		this.accessSecretKey = accessSecretKey;
+	}
+
+	public String getRefreshSecretKey() {
+		return refreshSecretKey;
+	}
+
+	public void setRefreshSecretKey(String refreshSecretKey) {
+		this.refreshSecretKey = refreshSecretKey;
+	}
+
+	@Override
     public boolean isEnabled() {
         return isEnabled;
     }

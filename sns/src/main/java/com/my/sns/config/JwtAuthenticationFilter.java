@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String jwt = getToken(request);
 			System.out.println("요청으로 전달받은 토큰 값 : " + jwt);
 			if (jwt != null && jwtProvider.validateJwtToken(jwt)) {
-				String username = jwtProvider.getUserNameFromJwtToken(jwt);
+				String username = jwtProvider.getUserNameFromJwtToken(jwt, true);
 				
 				CustomUserDetails userDetails = (CustomUserDetails)customUserDetailsService.loadUserByUsername(username);
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

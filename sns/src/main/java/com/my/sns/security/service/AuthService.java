@@ -71,25 +71,28 @@ public class AuthService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String acessToken = jwtProvider.generateJwtToken(authentication);
 		String refreshToken = jwtProvider.generateJwtToken();
+	
 		
 		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();		
 		List<String> roles = customUserDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 		
+		if(userDAO.updateAccessTokenSecretKey(jwtProvider.getKeytoString(), customUserDetails.getUserNo()) == 0) {
+			throw new RuntimeException("DB에 SecretKey 정보가 저장되지 않았습니다.");
+		}
+		
+		if(userDAO.insertRefreshToken(refreshToken, customUserDetails.getUserNo(), jwtProvider.getKeytoString()) == 0) {
+			throw new RuntimeException("DB에 토큰정보가 저장되지 않았습니다.");
+		}	
+		
 		tokenDTO.setAccessToken(acessToken);
-		tokenDTO.setAccessTokenExpiresIn(jwtProvider.getExpireTime(acessToken));
+		tokenDTO.setAccessTokenExpiresIn(jwtProvider.getExpireTime(acessToken, false));
 		tokenDTO.setRefreshToken(refreshToken);
-		tokenDTO.setRefreshTokenExpireIn(jwtProvider.getExpireTime(refreshToken));
+		tokenDTO.setRefreshTokenExpireIn(jwtProvider.getExpireTime(refreshToken, false));
 		jwtResponse.setTokenDTO(tokenDTO);
 		jwtResponse.setUserNo(customUserDetails.getUserNo());
 		jwtResponse.setUserRole(roles);
-		
-		if(userDAO.insertRefreshToken(refreshToken, customUserDetails.getUserNo()) == 0) {
-			throw new RuntimeException("DB에 토큰정보가 저장되지 않았습니다.");
-		}
-		
-		System.out.println(acessToken);
 
 		return jwtResponse;
 	}
@@ -118,10 +121,10 @@ public class AuthService {
 			throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
 		}
 		
-		String username = jwtProvider.getUserNameFromJwtToken(tokenRequestDTO.getAccessToken());
+		String username = jwtProvider.getUserNameFromJwtToken(tokenRequestDTO.getAccessToken(), true);
 		CustomUserDetails userDetails = (CustomUserDetails)customUserDetailsService.loadUserByUsername(username);
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-		Long userNo = jwtProvider.getUserNoFromJwtToken(tokenRequestDTO.getAccessToken());
+		Long userNo = jwtProvider.getUserNoFromJwtToken(tokenRequestDTO.getAccessToken(), true);
 		
 		// userNo을 통해 DB에서 refresh token 값 가져옴
 		TokenDTO tokenDTO = userDAO.getRefreshTokenByuserNo(userNo);
@@ -136,17 +139,21 @@ public class AuthService {
 		// 새로운 토큰 생성
 		if(tokenRequestDTO.getType() == 1) { //refresh token 도 갱신해야 할 경우
 			String refreshToken = jwtProvider.generateJwtToken();
+			String refreshTokenSecretKey = jwtProvider.getKeytoString();
 			tokenDTO.setRefreshToken(refreshToken);
-			tokenDTO.setRefreshTokenExpireIn(jwtProvider.getExpireTime(refreshToken));
+			tokenDTO.setRefreshTokenExpireIn(jwtProvider.getExpireTime(refreshToken, false));
 			// 저장소 refresh token 정보 업데이트(refresh token 재발급 시)
-			if(userDAO.updateRefreshToken(refreshToken, userNo) == 0) {
+			if(userDAO.updateRefreshToken(refreshToken, userNo, refreshTokenSecretKey) == 0) {
 				throw new RuntimeException("DB에 토큰정보가 갱신되지 않았습니다.");
 			}
 			
 		}
-		String acessToken = jwtProvider.generateJwtToken(authentication); 
-		tokenDTO.setAccessToken(acessToken);
-		tokenDTO.setAccessTokenExpiresIn(jwtProvider.getExpireTime(acessToken));
+		String accessToken = jwtProvider.generateJwtToken(authentication);
+		if(userDAO.updateAccessTokenSecretKey(jwtProvider.getKeytoString(), customUserDetails.getUserNo()) == 0) {
+			throw new RuntimeException("DB에 SecretKey 정보가 저장되지 않았습니다.");
+		}
+		tokenDTO.setAccessToken(accessToken);
+		tokenDTO.setAccessTokenExpiresIn(jwtProvider.getExpireTime(accessToken, false));
 		
 		// return
 		return tokenDTO;

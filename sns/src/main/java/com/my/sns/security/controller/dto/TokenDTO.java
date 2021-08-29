@@ -5,6 +5,7 @@ public class TokenDTO {
 	private String refreshToken;
 	private Long accessTokenExpiresIn;
 	private Long refreshTokenExpireIn;
+	private String refreshTokenSecretKey;
 	
 	public String getAccessToken() {
 		return accessToken;
@@ -30,5 +31,12 @@ public class TokenDTO {
 	public void setRefreshTokenExpireIn(Long refreshTokenExpireIn) {
 		this.refreshTokenExpireIn = refreshTokenExpireIn;
 	}
+	public String getRefreshTokenSecretKey() {
+		return refreshTokenSecretKey;
+	}
+	public void setRefreshTokenSecretKey(String refreshTokenSecretKey) {
+		this.refreshTokenSecretKey = refreshTokenSecretKey;
+	}
+	
 	
 }
