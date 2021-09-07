@@ -17,6 +17,7 @@ public interface UserService extends UserDbService {
 //	void insertUser (UserVO userVO, boolean admin);
 
 	UserVO getUserByUserId(String loginId);
+	UserVO getUserByUserNo(Long userNo);
 	public List<UserVO> searchUserName(String query);
 
 }

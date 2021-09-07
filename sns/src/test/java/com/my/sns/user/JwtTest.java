@@ -25,9 +25,9 @@ public class JwtTest {
 		jwt = new JwtProvider();
 
 		
-		token1 = jwt.generateJwtToken();
-		
-		token2 = jwt.generateJwtToken();
+//		token1 = jwt.generateJwtToken();
+//		
+//		token2 = jwt.generateJwtToken();
 		
 	}
 	

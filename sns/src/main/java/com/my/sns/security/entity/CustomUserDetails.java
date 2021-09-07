@@ -10,11 +10,11 @@ public class CustomUserDetails implements UserDetails {
 	private Long userNo;
     private String username;
     private String password;
-    private String accessSecretKey;
-    private String refreshSecretKey;
 //    private String userId;
 //    private String userImageUrl;
 //    private String userIntroduction;
+    private String accessToken;
+    private String refreshToken;
     private boolean isEnabled;
     private boolean isAccountNonExpired;
     private boolean isAccountNonLocked;
@@ -53,20 +53,20 @@ public class CustomUserDetails implements UserDetails {
         this.password = password;
     }
 
-    public String getAccessSecretKey() {
-		return accessSecretKey;
+	public String getAccessToken() {
+		return accessToken;
 	}
 
-	public void setAccessSecretKey(String accessSecretKey) {
-		this.accessSecretKey = accessSecretKey;
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
-	public String getRefreshSecretKey() {
-		return refreshSecretKey;
+	public String getRefreshToken() {
+		return refreshToken;
 	}
 
-	public void setRefreshSecretKey(String refreshSecretKey) {
-		this.refreshSecretKey = refreshSecretKey;
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	@Override

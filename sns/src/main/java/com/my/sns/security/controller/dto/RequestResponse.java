@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RequestResponse {
+	private TokenDTO tokenDTO;
 	private String message;
 	private int code;
 	private List<FriendRequestListEntity> friendRequestList = new ArrayList<>();
@@ -155,7 +156,14 @@ public class RequestResponse {
 	public void setSearchListEntity(List<SearchListEntity> searList) {
 		this.searchList = searList;
 	}
-	
+
+	public TokenDTO getTokenDTO() {
+		return tokenDTO;
+	}
+
+	public void setTokenDTO(TokenDTO tokenDTO) {
+		this.tokenDTO = tokenDTO;
+	}
 	
 
 }

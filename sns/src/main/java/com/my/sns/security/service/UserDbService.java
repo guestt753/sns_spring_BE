@@ -9,5 +9,6 @@ import com.my.sns.security.entity.UserRoleEntity;
 
 public interface UserDbService {
     public UserEntity getUser(String loginUserId);
+    public UserEntity getUser(Long userNo);
     public List<UserRoleEntity> getUserRoles(String loginUserId);
 }

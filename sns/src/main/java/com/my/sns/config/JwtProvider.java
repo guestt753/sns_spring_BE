@@ -34,7 +34,8 @@ public class JwtProvider {
 	Long userNo;
 	
 	private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
+//	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
+	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 4;            // 30분
 	private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 	private static final String USER_NO = "userNo";
 	
@@ -45,31 +46,36 @@ public class JwtProvider {
 	private byte[] decodeBytes;
 	private Date tokenExpiresIn;
 	
-	public JwtProvider() {
-//		byte[] keyBytes = Decoders.BASE64.decode(secretKey); 
-//		this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-		secretString = Encoders.BASE64.encode(key.getEncoded());
-		decodeBytes = Decoders.BASE64.decode(secretString);
-//		System.out.println("scretkey : " + this.key);
-//		System.out.println("scretkey(base64 encoded) : " + secretString);
-//		System.out.println("key(decoded) : " + decodeBytes);
-	} 
+//	public JwtProvider() {
+////		byte[] keyBytes = Decoders.BASE64.decode(secretKey); 
+////		this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+//		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+//		secretString = Encoders.BASE64.encode(key.getEncoded());
+//		decodeBytes = Decoders.BASE64.decode(secretString);
+////		signingKeyResolver = new MySigningKeyResolver();
+////		System.out.println("scretkey : " + this.key);
+////		System.out.println("scretkey(base64 encoded) : " + secretString);
+////		System.out.println("key(decoded) : " + decodeBytes);
+//	} 
 
 	
 	// generate access token
-	public String generateJwtToken(Authentication authentication) {
+	public String generateAccessJwtToken(Authentication authentication) {
+		System.out.println("::::::::generateAccessJwtToken:::::::::");
+		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+		secretString = Encoders.BASE64.encode(key.getEncoded());
+		decodeBytes = Decoders.BASE64.decode(secretString);
 		String name = authentication.getName();
-		String keyId = getKeyId(secretString);
+		String keyId = getAccessKeyId(secretString);
 		tokenExpiresIn = new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME);
 		if(authentication.getPrincipal() instanceof CustomUserDetails) {
 			 userNo = ((CustomUserDetails)authentication.getPrincipal()).getUserNo();
-			 System.out.println("userNo : " + userNo);
+//			 System.out.println("userNo : " + userNo);
 		}
-		System.out.println("생성된 토큰의 key : " + key);
-		System.out.println("생성된 토큰의 key(encoded) : " + secretString);
-		System.out.println("생성된 토큰의 keyId : " + keyId);
-		System.out.println("key(decoded) : " + decodeBytes);
+//		System.out.println("생성된 토큰의 key : " + key);
+//		System.out.println("생성된 토큰의 key(encoded) : " + secretString);
+//		System.out.println("생성된 토큰의 keyId : " + keyId);
+//		System.out.println("key(decoded) : " + decodeBytes);
 		return Jwts.builder()
 				.setHeaderParam(JwsHeader.KEY_ID, keyId)
 				.setSubject(name)
@@ -82,14 +88,23 @@ public class JwtProvider {
 	}
 	
 	// generate refresh token
-	public String generateJwtToken() {
-		String keyId = getKeyId(secretString);
+	public String generateRefreshJwtToken(Authentication authentication) {
+		System.out.println("::::::::generateRefreshJwtToken:::::::::");
+		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+		secretString = Encoders.BASE64.encode(key.getEncoded());
+		decodeBytes = Decoders.BASE64.decode(secretString);
+		String keyId = getRefreshKeyId(secretString);
 		tokenExpiresIn = new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRE_TIME);
-		System.out.println("생성된 재발급토큰의 key : " + key);
-		System.out.println("생성된 재발급토큰의 key(encoded) : " + secretString);
-		System.out.println("생성된 토큰의 keyId : " + keyId);
+		if(authentication.getPrincipal() instanceof CustomUserDetails) {
+			 userNo = ((CustomUserDetails)authentication.getPrincipal()).getUserNo();
+//			 System.out.println("userNo : " + userNo);
+		}
+//		System.out.println("생성된 재발급토큰의 key : " + key);
+//		System.out.println("생성된 재발급토큰의 key(encoded) : " + secretString);
+//		System.out.println("생성된 토큰의 keyId : " + keyId);
 		return Jwts.builder()
 				.setHeaderParam(JwsHeader.KEY_ID, keyId)
+				.claim(USER_NO, userNo)
 				.setIssuedAt(new Date())
 				.setExpiration(tokenExpiresIn)
 				.signWith(key)
@@ -102,25 +117,43 @@ public class JwtProvider {
 		return secretString;
 	}
 	
-	public String getKeyId(String key) {
+	public String getAccessKeyId(String key) {
+		String randomString = RandomStringUtils.randomAlphanumeric(10);
+		return randomString + key;
+	}
+	
+	public String getRefreshKeyId(String key) {
 		String randomString = RandomStringUtils.randomAlphanumeric(10);
 		return randomString + key;
 	}
 
-	public String getUserNameFromJwtToken(String token, boolean type) {
-		return parseClaims(token, type).getSubject();
+//	public String getUserNameFromJwtToken(String token, boolean type) {
+//		return parseClaims(token, type).getSubject();
+//	}
+//	
+//	public Long getUserNoFromJwtToken(String token, boolean type) {
+//		return Long.parseLong(parseClaims(token, type).get(USER_NO).toString());
+//	}
+//	
+//	public Long getExpireTime(String token, boolean type) {
+//		return parseClaims(token, type).getExpiration().getTime();
+//	}
+	
+	public String getUserNameFromJwtToken(String token) {
+		return parseClaims(token).getSubject();
 	}
 	
-	public Long getUserNoFromJwtToken(String token, boolean type) {
-		return Long.parseLong(parseClaims(token, type).get(USER_NO).toString());
+	public Long getUserNoFromJwtToken(String token) {
+		return Long.parseLong(parseClaims(token).get(USER_NO).toString());
 	}
 	
-	public Long getExpireTime(String token, boolean type) {
-		return parseClaims(token, type).getExpiration().getTime();
+	public Long getExpireTime(String token) {
+		return parseClaims(token).getExpiration().getTime();
 	}
 	
 	public boolean validateJwtToken(String authToken) {
 		try {
+			System.out.println("::::::::validateJwtToken:::::::::");
 			System.out.println("key : " + key);
 			System.out.println("key(encoded) : " + secretString);
 			System.out.println("key(decoded) : " + decodeBytes);
@@ -144,20 +177,28 @@ public class JwtProvider {
 	} 
 	
 	// 만료된 토큰도 정보를 꺼내기 위해서 따로 분리함.. true는 signingKeyResolver 호출
-	private Claims parseClaims(String accessToken, boolean type) {
-		if (type) {
+//	private Claims parseClaims(String accessToken, boolean type) {
+//		if (type) {
+//	        try {
+//	            return Jwts.parserBuilder().setSigningKeyResolver(signingKeyResolver).build().parseClaimsJws(accessToken).getBody();
+//	        } catch (ExpiredJwtException e) {
+//	            return e.getClaims();
+//	        }
+//	    } else {
+//	    	 try {
+//		            return Jwts.parserBuilder().setSigningKey(getKeytoString()).build().parseClaimsJws(accessToken).getBody();
+//		        } catch (ExpiredJwtException e) {
+//		            return e.getClaims();
+//		        }
+//	    }
+//	}
+	private Claims parseClaims(String accessToken) {
+		System.out.println("::::::::parseClaims:::::::::");
 	        try {
 	            return Jwts.parserBuilder().setSigningKeyResolver(signingKeyResolver).build().parseClaimsJws(accessToken).getBody();
 	        } catch (ExpiredJwtException e) {
 	            return e.getClaims();
-	        }
-	    } else {
-	    	 try {
-		            return Jwts.parserBuilder().setSigningKey(getKeytoString()).build().parseClaimsJws(accessToken).getBody();
-		        } catch (ExpiredJwtException e) {
-		            return e.getClaims();
-		        }
-	    }
+	        } 
 	}
 }
 

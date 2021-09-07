@@ -25,6 +25,7 @@ public class UserDAO {
 	// JDBC 관련 변수
 	@Autowired
 	JdbcTemplate jdbcTemplate;
+//	JdbcTemplate jdbcTemplateInstance;
 //	@Autowired
 //	NamedParameterJdbcTemplate jdbcTemplate;
 	
@@ -34,14 +35,14 @@ public class UserDAO {
 	public  final String SELECT_ALL_BY_USERID = "SELECT * FROM user WHERE user_id = :user_id";
 //	private final String USER_GET = "select * from spring_sns.user where user_id =?";  aws 서버에있는 db용
 	private final String USER_GET_BY_USERID = "select * from user where user_id =?;";
-	private final String USER_GET_BY_USERNO = "select * from user where user_no =?;";
+	private final String USER_GET_BY_USERNO = "select u.user_no, u.user_name, u.user_password, u.user_id, u.user_image_url, u.user_introduction, u.user_signup_type, tk.access_token_value, tk.refresh_token_value from user u join token tk on u.user_no = tk.user_no where u.user_no = ?;";
 	private final String SELECT_USER_NAME_BY_SEARCH = "select * from user where user_name like concat('%', ? ,'%')";
-	private final String SELECT_REFRESH_TOKEN_BY_USERNO = "select value, refresh_token_secret_key from refresh_token where user_no = ?;";
-	private final String UPDATE_REFRESH_TOKEN_BY_USERNO = "update refresh_token set user_no = ?, value = ?, refresh_token_secret_key = ? where user_no = ?;";
-	private final String DELETE_REFRESH_TOKEN_BY_USERNO = "delete from refresh_token where user_no = ?;";
-	private final String INSERT_REFRESH_TOKEN_BY_USERNO = "insert into refresh_token values (?,?,?);";
-	private final String UPDATE_SECRET_KEY_BY_USERNO = "update user set access_token_secret_key = ? where user_no = ?;";
-	private final String SELECT_KEY_BY_USERNO = "select access_token_secret_key from user where user_no = ? ";
+	private final String SELECT_TOKEN_BY_USERNO = "select refresh_token_value, refresh_token_secret_key, access_token_value, access_token_secret_key from token where user_no = ?;";
+	private final String UPDATE_REFRESH_TOKEN_BY_USERNO = "update token set user_no = ?, refresh_token_value = ?, refresh_token_secret_key = ? where user_no = ?;";
+	private final String DELETE_REFRESH_TOKEN_BY_USERNO = "delete from token where user_no = ?;";
+	private final String INSERT_TOKEN = "insert into token values (?,?,?,?,?);";
+	private final String UPDATE_TOKEN = "update token set refresh_token_value = ?, refresh_token_secret_key = ?, access_token_value = ?, access_token_secret_key = ? where user_no = ?;";
+	private final String UPDATE_ACCESS_TOKEN_BY_USERNO = "update token set user_no = ?, access_token_value = ?, access_token_secret_key = ? where user_no = ?;";
 	
 	
 	// CRUD 기능의 메소드 구현
@@ -60,9 +61,11 @@ public class UserDAO {
 	  
 	  public UserVO getUserByUserNo(Long userNo) {
 		  System.out.println("===> Spring JDBC로 getUserByUserNo() 기능 처리");
+//		  jdbcTemplateInstance = new JdbcTemplate();
+//		  jdbcTemplateInstance.getDataSource();
 		  Object[] args = {userNo}; 
 		  try {
-			  return jdbcTemplate.queryForObject(USER_GET_BY_USERNO, args, new UserRowMapper());
+			  return jdbcTemplate.queryForObject(USER_GET_BY_USERNO, args, new UserEntityRowMapper());
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;
@@ -80,11 +83,11 @@ public class UserDAO {
 		}
 	  }
 	  
-	  public TokenDTO getRefreshTokenByuserNo(Long userNo) {
-		  System.out.println("===> Spring JDBC로 getRefreshTokenByuserNo() 기능 처리");
+	  public TokenDTO getTokenByUserNo(Long userNo) {
+		  System.out.println("===> Spring JDBC로 getTokenByUserNo() 기능 처리");
 		  Object[] args = {userNo};
 		  try {
-			  return jdbcTemplate.queryForObject(SELECT_REFRESH_TOKEN_BY_USERNO, args, new RefreshTokenRowMapper());
+			  return jdbcTemplate.queryForObject(SELECT_TOKEN_BY_USERNO, args, new TokenRowMapper());
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;
@@ -112,23 +115,34 @@ public class UserDAO {
 			 return 0;
 		}
 	  }
-
-	  public int insertRefreshToken(String token, Long userNo, String key) {
-		  System.out.println("===> Spring JDBC로 insertRefreshToken() 기능 처리");
-		  Object[] args = {userNo,token,key};
+	  
+	  public int insertToken(String accessToken, String accessKey, String refreshToken, String refreshKey, Long userNo) {
+		  System.out.println("===> Spring JDBC로 insertToken() 기능 처리");
+		  Object[] args = {userNo, refreshToken, refreshKey, accessToken, accessKey};
 		  try {
-			  return jdbcTemplate.update(INSERT_REFRESH_TOKEN_BY_USERNO, args);
+			  return jdbcTemplate.update(INSERT_TOKEN, args);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
 		}
 	  }
 	  
-	  public int updateAccessTokenSecretKey(String value, Long userNo) {
-		  System.out.println("===> Spring JDBC로 updateAccessTokenSecretKey() 기능 처리");
-		  Object[] args = {value,userNo};
+	  public int updateToken(String accessToken, String accessKey, String refreshToken, String refreshKey, Long userNo) {
+		  System.out.println("===> Spring JDBC로 updateToken() 기능 처리");
+		  Object[] args = {refreshToken, refreshKey, accessToken, accessKey, userNo};
 		  try {
-			  return jdbcTemplate.update(UPDATE_SECRET_KEY_BY_USERNO, args);
+			  return jdbcTemplate.update(UPDATE_TOKEN, args);
+		  } catch (Exception e) {
+			 e.printStackTrace();
+			 return 0;
+		}
+	  }
+	  
+	  public int updateAccessToken(String token, Long userNo, String key) {
+		  System.out.println("===> Spring JDBC로 updateAccessToken() 기능 처리");
+		  Object[] args = {userNo, token, key, userNo};
+		  try {
+			  return jdbcTemplate.update(UPDATE_ACCESS_TOKEN_BY_USERNO, args);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
@@ -166,16 +180,33 @@ public class UserDAO {
 			vo.setUserImageUrl(rs.getString("USER_IMAGE_URL"));
 			vo.setUserIntroduction(rs.getString("USER_INTRODUCTION"));
 			vo.setUserSignupType(rs.getByte("USER_SIGNUP_TYPE"));
-			vo.setAccessTokenSecretKey(rs.getString("ACCESS_TOKEN_SECRET_KEY"));
 			return vo;
 		}
 	}
 	
-	class RefreshTokenRowMapper implements RowMapper<TokenDTO> {
+	class UserEntityRowMapper implements RowMapper<UserVO> {
+		public UserVO mapRow(ResultSet rs, int rowNum) throws SQLException {
+			UserVO vo = new UserVO();
+			vo.setUserNo(rs.getLong("USER_NO"));
+			vo.setUserName(rs.getString("USER_NAME"));
+			vo.setUserPassword(rs.getString("USER_PASSWORD"));
+			vo.setUserId(rs.getString("USER_ID"));
+			vo.setUserImageUrl(rs.getString("USER_IMAGE_URL"));
+			vo.setUserIntroduction(rs.getString("USER_INTRODUCTION"));
+			vo.setUserSignupType(rs.getByte("USER_SIGNUP_TYPE"));
+			vo.setAccessToken(rs.getString("ACCESS_TOKEN_VALUE"));
+			vo.setRefreshToken(rs.getString("REFRESH_TOKEN_VALUE"));
+			return vo;
+		}
+	}
+	
+	class TokenRowMapper implements RowMapper<TokenDTO> {
 		public TokenDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 			TokenDTO tokenDTO = new TokenDTO();
-			tokenDTO.setRefreshToken(rs.getString("VALUE"));
+			tokenDTO.setRefreshToken(rs.getString("REFRESH_TOKEN_VALUE"));
 			tokenDTO.setRefreshTokenSecretKey(rs.getString("REFRESH_TOKEN_SECRET_KEY"));
+			tokenDTO.setAccessToken(rs.getString("ACCESS_TOKEN_VALUE"));
+			tokenDTO.setAccessTokenSecretKey(rs.getString("ACCESS_TOKEN_SECRET_KEY"));
 			return tokenDTO;
 		}
 	}
