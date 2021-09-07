@@ -11,6 +11,10 @@ public class UserVO {
 	private String userImageUrl;
 	private String userIntroduction;
 	private byte userSignupType;
+//	private String refreshTokenSecretKey;
+	private String accessTokenSecretKey;
+	private String accessToken;
+	private String refreshToken;
 
 	
 
@@ -71,12 +75,46 @@ public class UserVO {
 	public void setUserSignupType(byte userSignupType) {
 		this.userSignupType = userSignupType;
 	}
+
+
 	@Override
 	public String toString() {
 		return "UserVO [userName=" + userName + ", userId=" + userId + ", userPassword=" + userPassword
 				+ ", userImageUrl=" + userImageUrl + ", userIntroduction=" + userIntroduction + ", userSignupType="
 				+ userSignupType + "]";
 	}
+
+
+	public String getAccessTokenSecretKey() {
+		return accessTokenSecretKey;
+	}
+
+
+	public void setAccessTokenSecretKey(String accessTokenSecretKey) {
+		this.accessTokenSecretKey = accessTokenSecretKey;
+	}
+
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+	
+	
 	
 	
 }

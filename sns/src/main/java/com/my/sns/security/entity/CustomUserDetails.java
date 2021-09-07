@@ -13,6 +13,8 @@ public class CustomUserDetails implements UserDetails {
 //    private String userId;
 //    private String userImageUrl;
 //    private String userIntroduction;
+    private String accessToken;
+    private String refreshToken;
     private boolean isEnabled;
     private boolean isAccountNonExpired;
     private boolean isAccountNonLocked;
@@ -51,7 +53,23 @@ public class CustomUserDetails implements UserDetails {
         this.password = password;
     }
 
-    @Override
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+
+	@Override
     public boolean isEnabled() {
         return isEnabled;
     }

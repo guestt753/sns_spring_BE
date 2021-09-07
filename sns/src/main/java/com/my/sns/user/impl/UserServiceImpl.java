@@ -27,7 +27,14 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public UserEntity getUser(String loginUserId) {
 		UserVO userVO = userDAO.getUserByUserId(loginUserId);
-        return new UserEntity(userVO.getUserId(), userVO.getUserPassword(), userVO.getUserNo());
+        return new UserEntity(userVO.getUserId(), userVO.getUserPassword(), userVO.getUserNo(), userVO.getAccessToken(), userVO.getRefreshToken());
+	}
+
+	@Override
+	@Transactional
+	public UserEntity getUser(Long userNo) {
+		UserVO userVO = userDAO.getUserByUserNo(userNo);
+        return new UserEntity(userVO.getUserId(), userVO.getUserPassword(), userVO.getUserNo(), userVO.getAccessToken(), userVO.getRefreshToken());
 	}
 
 	@Override
@@ -69,6 +76,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserVO getUserByUserId(String loginId) {
 		return userDAO.getUserByUserId(loginId);
+	}
+
+	@Override
+	public UserVO getUserByUserNo(Long userNo) {
+		return userDAO.getUserByUserNo(userNo);
 	}
 	
 	

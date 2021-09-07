@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.my.sns.common.Reissue;
 import com.my.sns.config.JwtProvider;
 import com.my.sns.friend.FriendListEntity;
 import com.my.sns.friend.FriendRequestListEntity;
 import com.my.sns.friend.FriendService;
 import com.my.sns.security.controller.dto.JwtResponse;
 import com.my.sns.security.controller.dto.RequestResponse;
+import com.my.sns.security.controller.dto.TokenDTO;
 import com.my.sns.security.entity.CustomUserDetails;
 import com.my.sns.security.entity.SearchListEntity;
 import com.my.sns.security.entity.UserEntity;
@@ -54,40 +56,24 @@ public class UserController {
 	JwtProvider jwtProvider;
 	@Autowired
 	CustomUserDetails customUserDetails;
+	@Autowired
+	Reissue reissue;
 	
 	RequestResponse requestResponse = new RequestResponse();
 	String message = null;
 	int code;
-
-	
-//	@ResponseBody
-//	@RequestMapping(value="login.do/posts", method=RequestMethod.POST, produces="application/json; charset=utf-8")
-//	public int login(String objJson) {
-//		System.out.println("::::::::Login:::::::::");
-//		int result = 0;
-//		Gson gson = new Gson();
-//		try {
-//			UserVO user = gson.fromJson(objJson, UserVO.class);
-//			user = userService.getUser(user);
-////			JSONObject obj = new JSONObject();
-//			if(user != null) {
-//				System.out.println(user.getUserName() + "님 환영합니다.");
-//				result = 1;
-//			}
-//		} catch (Exception e) {
-//			 e.printStackTrace();
-//			 System.out.println("아이디 또는 비밀번호가 일치하지 않습니다.");
-//		}
-//		return result;
-//	}
-
 	
 	@ResponseBody
 	@RequestMapping(value="getlist.do/gets", method=RequestMethod.GET, produces="application/json; charset=utf-8")
 	public ResponseEntity<?> getFriendRequestList() throws Exception {
 		List<FriendRequestListEntity> friendRequestListEntities = new ArrayList<FriendRequestListEntity>();
 		List<RequestResponse.FriendRequestListEntity> list = new ArrayList<>();
+		TokenDTO tokenDTO = new TokenDTO();
+		
 		System.out.println("::::::::Get_F_R_List:::::::::");
+		
+		// 재발급된 토큰들...(갱신x도 포함)
+		tokenDTO = reissue.setTokenObject(); 
 		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(principal instanceof CustomUserDetails) {
@@ -101,13 +87,13 @@ public class UserController {
 	        }
 			
 			if(friendRequestListEntities == null) {
-				message = "사용자가 받은 친구 요청 목록을 찾을 수 없습니다.";
+				message = "사용자가 받은 친구 요청 목록이 없습니다.";
 				code = 4900;
 				requestResponse.setMessage(message);
 				requestResponse.setCode(code);
 				requestResponse.setFriendRequestListEntity(list);
+				requestResponse.setTokenDTO(tokenDTO);
 				return ResponseEntity.ok(requestResponse);
-//	            throw new UsernameNotFoundException("사용자의 받은 친구 요청 목록을 찾을 수 없습니다.");
 			}
 			
 			message = "조회 성공";
@@ -115,6 +101,7 @@ public class UserController {
 			requestResponse.setMessage(message);
 			requestResponse.setCode(code);
 			requestResponse.setFriendRequestListEntity(list);
+			requestResponse.setTokenDTO(tokenDTO);
 		}
 		else {
 			String userNo = principal.toString();
@@ -122,12 +109,11 @@ public class UserController {
 			code = 5100;
 			requestResponse.setMessage(message);
 			requestResponse.setCode(code);
+			requestResponse.setTokenDTO(tokenDTO);
 			return ResponseEntity.ok(requestResponse);
-//			throw new Exception("principal의 변환을 실패했습니다. " + userNo);
 		}
 	
 		System.out.println(ResponseEntity.ok(requestResponse));
-//		return ResponseEntity.ok(new ArrayList<FriendRequestListEntity>(friendRequestListEntities));
 		return ResponseEntity.ok(requestResponse);
 	}
 	
@@ -136,10 +122,14 @@ public class UserController {
 	public ResponseEntity<?> getSearchList(String searchText) {
 		List<UserVO> searchList = new ArrayList<UserVO>();
 		List<FriendListEntity> friendList = new ArrayList<FriendListEntity>();
-		List<RequestResponse.SearchListEntity> searListEntities = new ArrayList<RequestResponse.SearchListEntity>();
+		List<RequestResponse.SearchListEntity> searchListEntities = new ArrayList<RequestResponse.SearchListEntity>();
+		TokenDTO tokenDTO = new TokenDTO();
 		int isadded = 0;
 		System.out.println("::::::::Get_Search_List:::::::::");
 		System.out.println(searchText);
+		
+		// 재발급된 토큰들...(갱신x도 포함)
+		tokenDTO = reissue.setTokenObject();
 		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(principal instanceof CustomUserDetails) {
@@ -152,18 +142,18 @@ public class UserController {
 			
 	        for(UserVO entity : searchList) {
 	        	if(entity.getUserNo() == userNo) { //검색결과 자신일 경우 맨 위에 결과가 뜨게금 설정
-	        		searListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(),entity.getUserName(),entity.getUserImageUrl()));
+	        		searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(),entity.getUserName(),entity.getUserImageUrl()));
 	        		continue;
 	        	}
 	        	for(FriendListEntity list : friendList) {
 	        		if(entity.getUserNo() == list.getUserOneNo()) { //검색 결과가 친구 일 경우
-	        			searListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(), entity.getUserName(), "친구" ,entity.getUserImageUrl()));
+	        			searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(), entity.getUserName(), "친구" ,entity.getUserImageUrl()));
 	        			isadded = 1;
 	        			break;
 	        		}
 	        	}
 	        	if(isadded == 0) {
-	        		searListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(), entity.getUserName(),entity.getUserImageUrl()));
+	        		searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(), entity.getUserName(),entity.getUserImageUrl()));
 	        	}
 	        	isadded = 0;
 	        }
@@ -174,14 +164,14 @@ public class UserController {
 				code = 4900;
 				requestResponse.setMessage(message);
 				requestResponse.setCode(code);
-				requestResponse.setSearchListEntity(searListEntities);
+				requestResponse.setSearchListEntity(searchListEntities);
 				return ResponseEntity.ok(requestResponse);
 			} else {
 			message = "조회 성공";
 			code = 4700;
 			requestResponse.setMessage(message);
 			requestResponse.setCode(code);
-			requestResponse.setSearchListEntity(searListEntities);
+			requestResponse.setSearchListEntity(searchListEntities);
 			}
 		}
 		else {
@@ -191,7 +181,6 @@ public class UserController {
 			requestResponse.setMessage(message);
 			requestResponse.setCode(code);
 			return ResponseEntity.ok(requestResponse);
-//			throw new Exception("principal의 변환을 실패했습니다. " + userNo);
 		}
 		return ResponseEntity.ok(requestResponse);
 	}
@@ -200,9 +189,13 @@ public class UserController {
 	@RequestMapping(value="actionFriendRequest.do/posts", method=RequestMethod.POST, produces="application/json; charset=utf-8")
 	public ResponseEntity<?> actionFriendRequest(Long requestedUserNo, int type) {
 		int result;
+		TokenDTO tokenDTO = new TokenDTO();
 		System.out.println("::::::::Action_Friend_Request:::::::::");
 		System.out.println(requestedUserNo.TYPE + " " + type);
 		System.out.println(requestedUserNo + " " + type);
+		
+		// 재발급된 토큰들...(갱신x도 포함)
+		tokenDTO = reissue.setTokenObject(); 
 
 		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -218,11 +211,13 @@ public class UserController {
 				code = 4700;
 				requestResponse.setMessage(message);
 				requestResponse.setCode(code);
+				requestResponse.setTokenDTO(tokenDTO);
 			}else { 
 				message = "Request Action failed.";
 				code = 4900;
 				requestResponse.setMessage(message);
 				requestResponse.setCode(code);
+				requestResponse.setTokenDTO(tokenDTO);
 				return ResponseEntity.ok(requestResponse);
 			}		 
 		}
@@ -232,8 +227,8 @@ public class UserController {
 			code = 5100;
 			requestResponse.setMessage(message);
 			requestResponse.setCode(code);
+			requestResponse.setTokenDTO(tokenDTO);
 			return ResponseEntity.ok(requestResponse);
-//			throw new Exception("principal의 변환을 실패했습니다. " + userNo);
 		}
 		System.out.println(ResponseEntity.ok(requestResponse));
 		System.out.println(requestResponse.getCode() + " " + requestResponse.getFriendRequestListEntity() + " " + requestResponse.toString());

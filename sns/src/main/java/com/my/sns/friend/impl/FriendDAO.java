@@ -57,7 +57,6 @@ public class FriendDAO {
 		  }
 		  
 		  public int friendInsert(Long userNo1, Long userNo2) {
-			  Object[] args = {userNo1, userNo2};
 			  try {
 				  return jdbcTemplate.update(INSERT_FRIEND, userNo1, userNo2) + jdbcTemplate.update(INSERT_FRIEND, userNo2, userNo1); //성공시 2리턴
 			  } catch (Exception e) {
