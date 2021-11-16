@@ -59,11 +59,7 @@ public class AuthService {
 		try {
 			
 			System.out.println("josn : " + objJson);
-<<<<<<< HEAD
-			//gson -> 자바 객체
-=======
 			System.out.println("fcmToken : " + fcmToken);
->>>>>>> b5ca04ae10957658703fcdcbce9b799bac999086
 			user = gson.fromJson(objJson, UserVO.class);			
 		} catch (Exception e) {
 			 e.printStackTrace();
