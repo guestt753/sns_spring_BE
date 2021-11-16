@@ -25,14 +25,9 @@ public class UserRoleDAO {
 	
 	public final String SELECT_ALL_BY_USERID = "SELECT ur.user_role_no, ur.user_no, ur.user_role_name FROM spring_sns.user_role ur JOIN spring_sns.user u ON ur.user_no = u.user_no WHERE u.user_id = ?";
 //	public final String SELECT_ALL_BY_USERID = "SELECT ur.user_role_no, ur.user_no, ur.user_role_name FROM user_role ur JOIN user u ON ur.user_no = u.user_no WHERE u.user_id = :user_id";
-<<<<<<< HEAD
-	public final String INSERT_ADMIN_ROLE = "INSERT INTO spring_sns.user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_ADMIN\");";
-	public final String INSERT_USER_ROLE = "INSERT INTO spring_sns.user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_USER\");";
-=======
 	public final String INSERT_ADMIN_ROLE = "INSERT INTO user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_ADMIN\");";
 //	public final String INSERT_USER_ROLE = "INSERT INTO user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_USER\");";
 	private final String INSERT_USER_ROLE = "INSERT INTO user_role(user_no, user_role_name) VALUES(?, \"ROLE_USER\");";
->>>>>>> b5ca04ae10957658703fcdcbce9b799bac999086
 	
 //	public List<UserRoleVO> getRolesByUserId(String userId){
 //		System.out.println("===> Spring JDBC로 getRolesByUserId() 기능 처리");
