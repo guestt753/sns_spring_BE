@@ -154,9 +154,9 @@ public class JwtProvider {
 	public boolean validateJwtToken(String authToken) {
 		try {
 			System.out.println("::::::::validateJwtToken:::::::::");
-			System.out.println("key : " + key);
-			System.out.println("key(encoded) : " + secretString);
-			System.out.println("key(decoded) : " + decodeBytes);
+//			System.out.println("key : " + key);
+//			System.out.println("key(encoded) : " + secretString);
+//			System.out.println("key(decoded) : " + decodeBytes);
 			Jwts.parserBuilder().setSigningKeyResolver(signingKeyResolver).build().parseClaimsJws(authToken);
 	
 //			Jwts.parserBuilder().setSigningKey(decodeBytes).build().parseClaimsJws(authToken);

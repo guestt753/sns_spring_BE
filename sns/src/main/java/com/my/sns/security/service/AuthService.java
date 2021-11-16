@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import com.google.gson.Gson;
 import com.my.sns.config.JwtProvider;
 import com.my.sns.friend.FriendService;
 import com.my.sns.security.controller.dto.JwtResponse;
+import com.my.sns.security.controller.dto.RequestResponse;
 import com.my.sns.security.controller.dto.TokenDTO;
 import com.my.sns.security.controller.dto.TokenRequestDTO;
 import com.my.sns.security.entity.CustomUserDetails;
@@ -45,9 +47,11 @@ public class AuthService {
 	
 	JwtResponse jwtResponse = new JwtResponse();
 	TokenDTO tokenDTO = new TokenDTO();
+	RequestResponse requestResponse = new RequestResponse();
+	int code;
 	
 	@Transactional
-	public JwtResponse login(String objJson) {
+	public JwtResponse login(String objJson, String fcmToken) {
 		System.out.println("::::::::Login:::::::::");
 		String accessTokenSecretKey;
 		String refreshTokenSecretKey;
@@ -55,6 +59,7 @@ public class AuthService {
 		try {
 			
 			System.out.println("josn : " + objJson);
+			System.out.println("fcmToken : " + fcmToken);
 			user = gson.fromJson(objJson, UserVO.class);			
 		} catch (Exception e) {
 			 e.printStackTrace();
@@ -73,39 +78,57 @@ public class AuthService {
 		
 		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();	
 		Long userNo = customUserDetails.getUserNo();
+		String userName = customUserDetails.getUserNickName();
+		String userImageUrl = customUserDetails.getUserImageUrl();
+		String userIntroduction = customUserDetails.getUserIntroduction();
 		
 		List<String> roles = customUserDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 		
-		if(userDAO.insertToken(accessToken, accessTokenSecretKey, refreshToken, refreshTokenSecretKey, userNo) == 0) {
+		if(userService.isIssuedToken(userNo))
+			throw new RuntimeException("DB에 토큰정보가 이미 있습니다.");
+		else if(userDAO.insertToken(accessToken, accessTokenSecretKey, refreshToken, refreshTokenSecretKey, userNo, fcmToken) == 0) {
 			throw new RuntimeException("DB에 토큰정보가 저장되지 않았습니다.");
-		}	
+		}
 		
 		tokenDTO.setAccessToken(accessToken);
 		tokenDTO.setRefreshToken(refreshToken);
 		jwtResponse.setTokenDTO(tokenDTO);
 		jwtResponse.setUserNo(userNo);
 		jwtResponse.setUserRole(roles);
+		jwtResponse.setUserName(userName);
+		jwtResponse.setUserImageUrl(userImageUrl);
+		jwtResponse.setUserIntroduction(userIntroduction);
 
+		System.out.println("불러온 내 이름 : " + userName);
 		return jwtResponse;
 	}
 	
-//	public int join(String objJson) {
-//	System.out.println("::::::::Join:::::::::"); 
-//	int result = 0;
-//	Gson gson = new Gson();
-//	try {
+	public RequestResponse join(String objJson) {
+	System.out.println("::::::::Join:::::::::"); 
+//	UserVO user = new UserVO();
+	boolean result = false;
+	Gson gson = new Gson();
+	try {
 //		String decodeStr = URLDecoder.decode(objJson, "UTF-8");
-//		UserVO user = gson.fromJson(decodeStr, UserVO.class);
-//		userService.insertUser(user);
-//		result = 1;
-//	}catch (Exception e) {
-//		e.printStackTrace();
-//		System.out.println("가입 실패");
-//	}
-//	return result;
-//}
+		user = gson.fromJson(objJson, UserVO.class);
+	}catch (Exception e) {
+		e.printStackTrace();
+		System.out.println("가입 실패");
+	}
+	result = userService.insertUser(user, false);
+	
+	if(result) {
+		code = 4700;
+		requestResponse.setCode(code);
+		return requestResponse;
+	}else {
+		code = 5100;
+		requestResponse.setCode(code);
+		return requestResponse;
+	}
+}
 	
 //	@Transactional
 //	public TokenRequestDTO reissue(String objJson) {
@@ -203,11 +226,13 @@ public class AuthService {
 //		String accessTokenSecretKey;
 //		String refreshTokenSecretKey;
 		TokenRequestDTO tokenRequestDTO = new TokenRequestDTO();
+		Long userNo = (long) 0;
 		
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(principal instanceof CustomUserDetails) {
 			accessToken = ((CustomUserDetails)principal).getAccessToken();
 			refreshToken = ((CustomUserDetails)principal).getRefreshToken();
+			userNo = ((CustomUserDetails)principal).getUserNo();
 		}
 		
 		// refresh token 검증
@@ -293,6 +318,7 @@ public class AuthService {
 		tokenDTO.setAccessToken(accessToken);
 		tokenDTO.setRefreshToken(refreshToken);
 		tokenRequestDTO.setTokenDTO(tokenDTO);
+		tokenRequestDTO.setUserNo(userNo);
 		
 		return tokenRequestDTO;
 //		if(tokenDTO.getCode() == 0) //갱신없이 자동로그인 인증 완료..

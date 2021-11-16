@@ -26,7 +26,8 @@ public class UserRoleDAO {
 	public final String SELECT_ALL_BY_USERID = "SELECT ur.user_role_no, ur.user_no, ur.user_role_name FROM user_role ur JOIN user u ON ur.user_no = u.user_no WHERE u.user_id = ?";
 //	public final String SELECT_ALL_BY_USERID = "SELECT ur.user_role_no, ur.user_no, ur.user_role_name FROM user_role ur JOIN user u ON ur.user_no = u.user_no WHERE u.user_id = :user_id";
 	public final String INSERT_ADMIN_ROLE = "INSERT INTO user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_ADMIN\");";
-	public final String INSERT_USER_ROLE = "INSERT INTO user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_USER\");";
+//	public final String INSERT_USER_ROLE = "INSERT INTO user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_USER\");";
+	private final String INSERT_USER_ROLE = "INSERT INTO user_role(user_no, user_role_name) VALUES(?, \"ROLE_USER\");";
 	
 //	public List<UserRoleVO> getRolesByUserId(String userId){
 //		System.out.println("===> Spring JDBC로 getRolesByUserId() 기능 처리");
@@ -49,8 +50,9 @@ public class UserRoleDAO {
 	}
 
 	public void addUserRole(Long userNo) {
-		Map<String, Object> params = Collections.singletonMap("userNo", userNo);
-		jdbcTemplate.update(INSERT_USER_ROLE, params);
+//		Map<String, Object> params = Collections.singletonMap("userNo", userNo);
+		Object[] args = {userNo};
+		jdbcTemplate.update(INSERT_USER_ROLE, args);
 	}
 	
 	class UserRoleRowMapper implements RowMapper<UserRoleVO> {

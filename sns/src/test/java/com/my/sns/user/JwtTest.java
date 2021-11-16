@@ -1,5 +1,7 @@
 package com.my.sns.user;
 
+import java.util.UUID;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,12 @@ public class JwtTest {
 	String token2;
 	String key1;
 	String key2;
+	String roomId;
 	
 	@Before
 	public void setUp() throws Exception {
 		jwt = new JwtProvider();
+		roomId = UUID.randomUUID().toString();
 
 		
 //		token1 = jwt.generateJwtToken();
@@ -38,6 +42,7 @@ public class JwtTest {
 		System.out.println("token1 : " + jwt.validateJwtToken(token1));
 		System.out.println("token1 : " + jwt.validateJwtToken(token2));
 		System.out.println("key encoded to sting : " + jwt.getKeytoString());
+		System.out.println("roomId : " + roomId);
 	}
 
 }
