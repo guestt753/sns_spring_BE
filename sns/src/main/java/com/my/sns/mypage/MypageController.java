@@ -30,8 +30,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.my.sns.security.entity.CustomUserDetails;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+//import org.json.simple.JSONArray;
+//import org.json.simple.JSONObject;
 
 @Controller
 public class MypageController {
