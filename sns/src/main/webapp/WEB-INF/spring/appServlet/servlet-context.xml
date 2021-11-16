@@ -23,9 +23,10 @@
 	
 	<context:component-scan base-package="com.my.sns" />
 	
+	<!-- 파일 업로드에 필요한 bean (병규)-->
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
 	</beans:bean>
-
+	
 	
 	
 	

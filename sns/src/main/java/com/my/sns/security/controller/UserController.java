@@ -75,6 +75,8 @@ public class UserController {
 		// 재발급된 토큰들...(갱신x도 포함)
 		tokenDTO = reissue.setTokenObject(); 
 		
+		//인증정보를 통해 유저 고유 번호를 가져오는 코드
+		//컨트롤러가 직접 DAO 객체를 호출하면 문제가 생긴다.
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(principal instanceof CustomUserDetails) {
 			Long userNo = ((CustomUserDetails)principal).getUserNo();

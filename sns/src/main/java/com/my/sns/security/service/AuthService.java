@@ -55,6 +55,7 @@ public class AuthService {
 		try {
 			
 			System.out.println("josn : " + objJson);
+			//gson -> 자바 객체
 			user = gson.fromJson(objJson, UserVO.class);			
 		} catch (Exception e) {
 			 e.printStackTrace();
@@ -204,7 +205,7 @@ public class AuthService {
 //		String refreshTokenSecretKey;
 		TokenRequestDTO tokenRequestDTO = new TokenRequestDTO();
 		
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(principal instanceof CustomUserDetails) {
 			accessToken = ((CustomUserDetails)principal).getAccessToken();
 			refreshToken = ((CustomUserDetails)principal).getRefreshToken();
