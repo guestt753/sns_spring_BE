@@ -14,10 +14,13 @@ public interface UserService extends UserDbService {
 	 * // 회원 등록 void insertUser(UserVO vo);
 	 */
 	
-//	void insertUser (UserVO userVO, boolean admin);
+	boolean insertUser (UserVO userVO, boolean admin);
 
 	UserVO getUserByUserId(String loginId);
 	UserVO getUserByUserNo(Long userNo);
 	public List<UserVO> searchUserName(String query);
+	public boolean isIssuedToken(Long userNo);
+	public List<String> getFcmTokens(String roomId);
+	public boolean updateFcmToken(String token, Long userNo);
 
 }

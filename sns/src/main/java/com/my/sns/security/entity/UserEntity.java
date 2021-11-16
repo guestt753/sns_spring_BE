@@ -3,7 +3,10 @@ package com.my.sns.security.entity;
 public class UserEntity {
     private String loginUserId;
     private String password;
+    private String userName;
     private Long userNo;
+    private String userImageUrl;
+    private String userIntroduction;
     private String accessToken;
     private String refreshToken;
     
@@ -12,16 +15,60 @@ public class UserEntity {
     public UserEntity() {
 		super();
 	}
+    
+    
+	
+    public UserEntity(String loginUserId, String password, String userName, Long userNo, String userImageUrl,
+			String userIntroduction) {
+		super();
+		this.loginUserId = loginUserId;
+		this.password = password;
+		this.userName = userName;
+		this.userNo = userNo;
+		this.userImageUrl = userImageUrl;
+		this.userIntroduction = userIntroduction;
+	}
 
-	public UserEntity(String loginUserId, String password, Long userNo, String accessToken, String refreshToekn) {
-        this.loginUserId = loginUserId;
-        this.password = password;
-        this.userNo = userNo;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToekn;
-    }
 
-    public String getLoginUserId() {
+
+	public UserEntity(String loginUserId, String password, String userName, Long userNo, String userImageUrl, String userIntroduction,
+			String accessToken, String refreshToken) {
+		super();
+		this.loginUserId = loginUserId;
+		this.password = password;
+		this.userName = userName;
+		this.userNo = userNo;
+		this.userImageUrl = userImageUrl;
+		this.userIntroduction = userIntroduction;
+		this.accessToken = accessToken;
+		this.refreshToken = refreshToken;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserImageUrl() {
+		return userImageUrl;
+	}
+
+	public void setUserImageUrl(String userImageUrl) {
+		this.userImageUrl = userImageUrl;
+	}
+
+	public String getUserIntroduction() {
+		return userIntroduction;
+	}
+
+	public void setUserIntroduction(String userIntroduction) {
+		this.userIntroduction = userIntroduction;
+	}
+
+	public String getLoginUserId() {
         return loginUserId;
     }
 

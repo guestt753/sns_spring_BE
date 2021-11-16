@@ -4,6 +4,7 @@ public class TokenRequestDTO {
 	private TokenDTO tokenDTO;
 	private String accessToken; 
 	private String refreshToken;
+	private Long userNo;
 	private int type; // 0-> acessToken만 갱신, 1 -> refreshToken도 갱신..
 	
 	public String getAccessToken() {
@@ -31,5 +32,12 @@ public class TokenRequestDTO {
 	public void setType(int type) {
 		this.type = type;
 	}
+	public Long getUserNo() {
+		return userNo;
+	}
+	public void setUserNo(Long userNo) {
+		this.userNo = userNo;
+	}
+	
 
 }

@@ -12,6 +12,7 @@
   <filter>
   	<filter-name>encodingFilter</filter-name>
   	<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+  	<async-supported>true</async-supported> <!-- 웹소캣 설정 (비동기 지원) -->
   	<init-param>
   		<param-name>encoding</param-name>
   		<param-value>UTF-8</param-value>
@@ -26,6 +27,7 @@
   <filter>
   	<filter-name>springSecurityFilterChain</filter-name>
   	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  	<async-supported>true</async-supported> <!-- 웹소캣 설정 (비동기 지원) -->
   </filter>
   
   <filter-mapping>
@@ -63,7 +65,7 @@
     	<max-request-size>41943040</max-request-size> <!-- 40MB -->
     	<file-size-threshold>20971520</file-size-threshold> <!-- 20MB -->
     </multipart-config>
-    
+    <async-supported>true</async-supported> <!-- 웹소캣 설정 (비동기 지원) -->
   </servlet>
   <servlet-mapping>
     <servlet-name>appServlet</servlet-name>

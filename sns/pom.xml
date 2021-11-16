@@ -14,13 +14,18 @@
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
 	<dependencies>
+		<dependency>
+		  	<groupId>com.google.firebase</groupId>
+		  	<artifactId>firebase-admin</artifactId>
+		  	<version>8.1.0</version>
+		</dependency>
 				<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
 		    <version>3.12.0</version>
 		</dependency>
-		<!-- for JWT -->
+		<!-- for Spring Security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
@@ -48,6 +53,7 @@
 		<artifactId>jjwt</artifactId>
 		<version>0.9.1</version>
 	</dependency> -->
+	<!-- for JWT -->
 	<dependency>
 	    <groupId>io.jsonwebtoken</groupId>
 	    <artifactId>jjwt-api</artifactId>
@@ -109,6 +115,7 @@
         	<artifactId>commons-dbcp</artifactId>
         	<version>1.4</version>
         </dependency>
+<<<<<<< HEAD
         <!-- 스프링에서 파일 업로드하기(병규) commons-io 라이브러리 추가 -->
         <dependency>
         <groupId>commons-io</groupId>
@@ -121,6 +128,37 @@
         <artifactId>commons-fileupload</artifactId>
         <version>1.3.3</version>
         </dependency>
+=======
+        <!-- Spring Websocket -->
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-websocket</artifactId>
+        	<version>${org.springframework-version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-messaging --> 
+        <dependency> 
+        	<groupId>org.springframework</groupId> 
+        	<artifactId>spring-messaging</artifactId> 
+        	<version>${org.springframework-version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/javax-websocket-client-impl -->
+		<dependency>
+		    <groupId>org.eclipse.jetty.websocket</groupId>
+		    <artifactId>javax-websocket-client-impl</artifactId>
+		    <version>9.4.12.v20180830</version>
+		</dependency>
+        <dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.12.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+
+>>>>>>> b5ca04ae10957658703fcdcbce9b799bac999086
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>

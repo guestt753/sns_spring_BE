@@ -34,7 +34,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         CustomUserDetails customUserDetails = new CustomUserDetails();
         customUserDetails.setUsername(customUser.getLoginUserId());
         customUserDetails.setPassword(customUser.getPassword());
+        customUserDetails.setUserNickName(customUser.getUserName());
         customUserDetails.setUserNo(customUser.getUserNo());
+        customUserDetails.setUserImageUrl(customUser.getUserImageUrl());
+        customUserDetails.setUserIntroduction(customUser.getUserIntroduction());
 
         List<UserRoleEntity> customRoles = userdbService.getUserRoles(loginId);
         // 로그인 한 사용자의 권한 정보를 GrantedAuthority를 구현하고 있는 SimpleGrantedAuthority객체에 담아
@@ -66,6 +69,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         CustomUserDetails customUserDetails = new CustomUserDetails();
         customUserDetails.setUsername(customUser.getLoginUserId());
         customUserDetails.setPassword(customUser.getPassword());
+        customUserDetails.setUserNickName(customUser.getUserName());
         customUserDetails.setUserNo(customUser.getUserNo());
         customUserDetails.setAccessToken(customUser.getAccessToken());
         customUserDetails.setRefreshToken(customUser.getRefreshToken());

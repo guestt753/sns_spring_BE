@@ -8,11 +8,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomUserDetails implements UserDetails {
 	private Long userNo;
-    private String username;
+    private String username; // userId 임
     private String password;
-//    private String userId;
-//    private String userImageUrl;
-//    private String userIntroduction;
+    private String userNickName;
+    private String userImageUrl;
+    private String userIntroduction;
     private String accessToken;
     private String refreshToken;
     private boolean isEnabled;
@@ -33,6 +33,15 @@ public class CustomUserDetails implements UserDetails {
 
 	public void setUserNo(Long userNo) {
 		this.userNo = userNo;
+	}
+
+
+	public String getUserNickName() {
+		return userNickName;
+	}
+
+	public void setUserNickName(String userNickName) {
+		this.userNickName = userNickName;
 	}
 
 	@Override
@@ -67,6 +76,22 @@ public class CustomUserDetails implements UserDetails {
 
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+	}
+
+	public String getUserImageUrl() {
+		return userImageUrl;
+	}
+
+	public void setUserImageUrl(String userImageUrl) {
+		this.userImageUrl = userImageUrl;
+	}
+
+	public String getUserIntroduction() {
+		return userIntroduction;
+	}
+
+	public void setUserIntroduction(String userIntroduction) {
+		this.userIntroduction = userIntroduction;
 	}
 
 	@Override
