@@ -23,7 +23,7 @@ public class UserRoleDAO {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
-	public final String SELECT_ALL_BY_USERID = "SELECT ur.user_role_no, ur.user_no, ur.user_role_name FROM spring_sns.user_role ur JOIN spring_sns.user u ON ur.user_no = u.user_no WHERE u.user_id = ?";
+	public final String SELECT_ALL_BY_USERID = "SELECT ur.user_role_no, ur.user_no, ur.user_role_name FROM sns.user_role ur JOIN sns.user u ON ur.user_no = u.user_no WHERE u.user_id = ?";
 //	public final String SELECT_ALL_BY_USERID = "SELECT ur.user_role_no, ur.user_no, ur.user_role_name FROM user_role ur JOIN user u ON ur.user_no = u.user_no WHERE u.user_id = :user_id";
 	public final String INSERT_ADMIN_ROLE = "INSERT INTO user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_ADMIN\");";
 //	public final String INSERT_USER_ROLE = "INSERT INTO user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_USER\");";
