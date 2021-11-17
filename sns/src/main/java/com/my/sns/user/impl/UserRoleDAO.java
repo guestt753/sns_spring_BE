@@ -29,6 +29,11 @@ public class UserRoleDAO {
 //	public final String INSERT_USER_ROLE = "INSERT INTO user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_USER\");";
 	private final String INSERT_USER_ROLE = "INSERT INTO user_role(user_no, user_role_name) VALUES(?, \"ROLE_USER\");";
 	
+	//AWS 전용 SQL문
+	public final String AWS_SELECT_ALL_BY_USERID = "SELECT ur.user_role_no, ur.user_no, ur.user_role_name FROM spring_sns.user_role ur JOIN spring_sns.user u ON ur.user_no = u.user_no WHERE u.user_id = ?";
+    public final String AWS_INSERT_ADMIN_ROLE = "INSERT INTO spring_sns.user_role(user_no, user_role_name) " + "VALUES (:userNo, \"ROLE_ADMIN\");";
+	private final String AWS_INSERT_USER_ROLE = "INSERT INTO spring_sns.user_role(user_no, user_role_name) VALUES(?, \"ROLE_USER\");";
+	
 //	public List<UserRoleVO> getRolesByUserId(String userId){
 //		System.out.println("===> Spring JDBC로 getRolesByUserId() 기능 처리");
 //		Map<String, Object> map = new HashMap<>();

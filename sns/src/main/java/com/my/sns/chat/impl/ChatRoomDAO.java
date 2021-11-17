@@ -23,6 +23,11 @@ public class ChatRoomDAO {
 	private final String INSERT_CHATROOM = "insert into chatroom values(?,?,?,?,?,?);";
 	private final String SELECT_CHATROOM_INFO_BY_ROOMID = "select * from chatroom where chatroom_no = ?;";
 	
+	//AWS 전용 SQL문
+	private final String AWS_SELECT_USERNO_BY_ROOMID = "select spring_sns.user_no from chatroom where chatroom_no = ?;";
+	private final String AWS_INSERT_CHATROOM = "insert into  spring_sns.chatroom values(?,?,?,?,?,?);";
+	private final String AWS_SELECT_CHATROOM_INFO_BY_ROOMID = "select * from  spring_sns.chatroom where chatroom_no = ?;";
+	
 //	@PostConstruct
 //	private void init() {
 //		chatRoomMap = new LinkedHashMap<String, ChatRoomDTO>();

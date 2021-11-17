@@ -48,6 +48,26 @@ public class UserDAO {
 	private final String UPDATE_FCM_TOKEN_BY_USERNO = "update token set fcm_token_value = ? where user_no = ?;";
 	private final String IS_FCM_TOKEN_BY_USER_NO = "select count(fcm_token_value) from token where user_no = ?;";
 	
+	//AWS 전용 SQL문 
+	// SQL 명령어들
+		private final String AWS_USER_INSERT = "insert into spring_sns.user(user_name, user_password, user_id, user_signup_type) values(?,?,?,?)";
+//		private final String USER_INSERT = "insert into user(user_name, user_password, user_id, user_signup_type)" + "VALUES (:user_name, :user_password, :user_id, :user_signup_type);";
+		public  final String AWS_SELECT_ALL_BY_USERID = "SELECT * FROM spring_sns.user WHERE user_id = :user_id";
+//		private final String USER_GET = "select * from spring_sns.user where user_id =?";  aws 서버에있는 db용
+		private final String AWS_USER_GET_BY_USERID = "select * from spring_sns.user where user_id =?;";
+		private final String AWS_USER_GET_BY_USERNO = "select u.user_no, u.user_name, u.user_password, u.user_id, u.user_image_url, u.user_introduction, u.user_signup_type, tk.access_token_value, tk.refresh_token_value from spring_sns.user u join token tk on u.user_no = tk.user_no where u.user_no = ?;";
+		private final String AWS_SELECT_USER_NAME_BY_SEARCH = "select * from spring_sns.user where user_name like concat('%', ? ,'%')";
+		private final String AWS_IS_TOKEN_BY_USERNO = "select count(*) from spring_sns.token where user_no = ?;";
+		private final String AWS_SELECT_TOKEN_BY_USERNO = "select refresh_token_value, refresh_token_secret_key, access_token_value, access_token_secret_key from spring_sns.token where user_no = ?;";
+		private final String AWS_UPDATE_REFRESH_TOKEN_BY_USERNO = "update spring_sns.token set user_no = ?, refresh_token_value = ?, refresh_token_secret_key = ? where user_no = ?;";
+		private final String AWS_DELETE_REFRESH_TOKEN_BY_USERNO = "delete from spring_sns.token where user_no = ?;";
+		private final String AWS_INSERT_TOKEN = "insert into spring_sns.token(user_no, refresh_token_value, refresh_token_secret_key, access_token_value, access_token_secret_key, fcm_token_value) values (?,?,?,?,?,?);";
+		private final String AWS_UPDATE_TOKEN = "update spring_sns.token set refresh_token_value = ?, refresh_token_secret_key = ?, access_token_value = ?, access_token_secret_key = ? where user_no = ?;";
+		private final String AWS_UPDATE_ACCESS_TOKEN_BY_USERNO = "update spring_sns.token set user_no = ?, access_token_value = ?, access_token_secret_key = ? where user_no = ?;";
+		private final String AWS_SELECT_FCM_TOKEN_BY_USERNO = "select fcm_token_value from spring_sns.token where user_no = ?;";
+		private final String AWS_UPDATE_FCM_TOKEN_BY_USERNO = "update spring_sns.token set fcm_token_value = ? where user_no = ?;";
+		private final String AWS_IS_FCM_TOKEN_BY_USER_NO = "select count(fcm_token_value) from spring_sns.token where user_no = ?;";
+	
 	// CRUD 기능의 메소드 구현
 	// 회원 조회
 	

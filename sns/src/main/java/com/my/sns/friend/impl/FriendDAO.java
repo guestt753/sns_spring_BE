@@ -23,6 +23,11 @@ public class FriendDAO {
 		private final String SELECT_FRIEND_REQUEST_BY_USERNO = "select u.user_no, u.user_name, u.user_image_url from spring_sns.user u join spring_sns.friend_request rq on rq.user_one_no = u.user_no where rq.user_two_no = ?;";
 		private final String INSERT_FRIEND = "insert into spring_sns.friend(user_one_no, user_two_no) values(?,?)";
 		
+		//AWS 전용 SQL문
+		private final String AWS_SELECT_FRIEND_BY_USERNO = "select user_one_no, friend_status from spring_sns.friend where user_one_no = ? or user_two_no = ?;";
+		private final String AWS_DELETE_FRIEND_REQUEST_BY_USERNO = "delete from spring_sns.friend_request where user_two_no = ? and user_one_no = ?";
+		private final String AWS_SELECT_FRIEND_REQUEST_BY_USERNO = "select u.user_no, u.user_name, u.user_image_url from spring_sns.user u join spring_sns.friend_request rq on rq.user_one_no = u.user_no where rq.user_two_no = ?;";
+		private final String AWS_INSERT_FRIEND = "insert into spring_sns.friend(user_one_no, user_two_no) values(?,?)";
 		
 		public List<FriendRequestListEntity> getFriendRequestByUserNo(Long userNo) {
 			  System.out.println("===> Spring JDBC로 getFriendRequestByUserNo() 기능 처리");
