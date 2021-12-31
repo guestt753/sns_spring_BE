@@ -46,18 +46,18 @@ public class UserRoleDAO {
 		System.out.println("===> Spring JDBC로 getRolesByUserId() 기능 처리");
 		Object[] args = {userId};
 
-		return jdbcTemplate.query(SELECT_ALL_BY_USERID, args, new UserRoleRowMapper());
+		return jdbcTemplate.query(AWS_SELECT_ALL_BY_USERID, args, new UserRoleRowMapper());
 	}
 
 	public void addAdminRole(Long userNo) {
 		Map<String, Object> params = Collections.singletonMap("userNo", userNo);
-		jdbcTemplate.update(INSERT_ADMIN_ROLE, params);
+		jdbcTemplate.update(AWS_INSERT_ADMIN_ROLE, params);
 	}
 
 	public void addUserRole(Long userNo) {
 //		Map<String, Object> params = Collections.singletonMap("userNo", userNo);
 		Object[] args = {userNo};
-		jdbcTemplate.update(INSERT_USER_ROLE, args);
+		jdbcTemplate.update(AWS_INSERT_USER_ROLE, args);
 	}
 	
 	class UserRoleRowMapper implements RowMapper<UserRoleVO> {

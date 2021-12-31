@@ -33,7 +33,7 @@ public class FriendDAO {
 			  System.out.println("===> Spring JDBC로 getFriendRequestByUserNo() 기능 처리");
 			  Object[] args = {userNo};
 			  try {
-				  return jdbcTemplate.query(SELECT_FRIEND_REQUEST_BY_USERNO, args, new FriendRequestRowMapper());
+				  return jdbcTemplate.query(AWS_SELECT_FRIEND_REQUEST_BY_USERNO, args, new FriendRequestRowMapper());
 			  } catch (Exception e) {
 				 e.printStackTrace();
 				 return null;
@@ -44,7 +44,7 @@ public class FriendDAO {
 			  System.out.println("===> Spring JDBC로 getFriendListByUserNo() 기능 처리");
 			  Object[] args = {userNo1,userNo2};
 			  try {
-				  return jdbcTemplate.query(SELECT_FRIEND_BY_USERNO, args, new FriendListRowMapper());
+				  return jdbcTemplate.query(AWS_SELECT_FRIEND_BY_USERNO, args, new FriendListRowMapper());
 			  } catch (Exception e) {
 				 e.printStackTrace();
 				 return null;
@@ -54,7 +54,7 @@ public class FriendDAO {
 		  public int friendRequestAction(Long userNo, Long requestedUserNo) {
 			  Object[] args = {userNo,requestedUserNo};
 			  try {
-				  return jdbcTemplate.update(DELETE_FRIEND_REQUEST_BY_USERNO, args); //성공시 1리턴
+				  return jdbcTemplate.update(AWS_DELETE_FRIEND_REQUEST_BY_USERNO, args); //성공시 1리턴
 			  } catch (Exception e) {
 				 e.printStackTrace();
 				 return 0;
@@ -63,7 +63,7 @@ public class FriendDAO {
 		  
 		  public int friendInsert(Long userNo1, Long userNo2) {
 			  try {
-				  return jdbcTemplate.update(INSERT_FRIEND, userNo1, userNo2) + jdbcTemplate.update(INSERT_FRIEND, userNo2, userNo1); //성공시 2리턴
+				  return jdbcTemplate.update(AWS_INSERT_FRIEND, userNo1, userNo2) + jdbcTemplate.update(AWS_INSERT_FRIEND, userNo2, userNo1); //성공시 2리턴
 			  } catch (Exception e) {
 				 e.printStackTrace();
 				 return 0;

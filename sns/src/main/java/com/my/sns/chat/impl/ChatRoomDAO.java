@@ -37,7 +37,7 @@ public class ChatRoomDAO {
 		  System.out.println("===> Spring JDBC로 getUsersByRoomId() 기능 처리");
 		  Object[] args = {roomId};
 		  try {
-			  return jdbcTemplate.query(SELECT_USERNO_BY_ROOMID, args, new UserNoListRowMapper());
+			  return jdbcTemplate.query(AWS_SELECT_USERNO_BY_ROOMID, args, new UserNoListRowMapper());
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;
@@ -48,7 +48,7 @@ public class ChatRoomDAO {
 		System.out.println("===> Spring JDBC로 insertChatRoom() 기능 처리");
 		Object[] args = {roomId, userNo, roomName, myImageUrl, participantsNo, userName};
 		try {
-			return jdbcTemplate.update(INSERT_CHATROOM, args);
+			return jdbcTemplate.update(AWS_INSERT_CHATROOM, args);
 		} catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
@@ -59,7 +59,7 @@ public class ChatRoomDAO {
 		System.out.println("===> Spring JDBC로 getChatRoomInfo() 기능 처리");
 		Object[] args = {roomId};
 		try {
-			  return jdbcTemplate.query(SELECT_CHATROOM_INFO_BY_ROOMID, args, new ChatRoomRowMapper());
+			  return jdbcTemplate.query(AWS_SELECT_CHATROOM_INFO_BY_ROOMID, args, new ChatRoomRowMapper());
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;

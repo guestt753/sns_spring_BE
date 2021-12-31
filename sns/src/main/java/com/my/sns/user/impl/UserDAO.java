@@ -55,7 +55,7 @@ public class UserDAO {
 		public  final String AWS_SELECT_ALL_BY_USERID = "SELECT * FROM spring_sns.user WHERE user_id = :user_id";
 //		private final String USER_GET = "select * from spring_sns.user where user_id =?";  aws 서버에있는 db용
 		private final String AWS_USER_GET_BY_USERID = "select * from spring_sns.user where user_id =?;";
-		private final String AWS_USER_GET_BY_USERNO = "select u.user_no, u.user_name, u.user_password, u.user_id, u.user_image_url, u.user_introduction, u.user_signup_type, tk.access_token_value, tk.refresh_token_value from spring_sns.user u join token tk on u.user_no = tk.user_no where u.user_no = ?;";
+		private final String AWS_USER_GET_BY_USERNO = "select u.user_no, u.user_name, u.user_password, u.user_id, u.user_image_url, u.user_introduction, u.user_signup_type, tk.access_token_value, tk.refresh_token_value from spring_sns.user u join spring_sns.token tk on u.user_no = tk.user_no where u.user_no = ?;";
 		private final String AWS_SELECT_USER_NAME_BY_SEARCH = "select * from spring_sns.user where user_name like concat('%', ? ,'%')";
 		private final String AWS_IS_TOKEN_BY_USERNO = "select count(*) from spring_sns.token where user_no = ?;";
 		private final String AWS_SELECT_TOKEN_BY_USERNO = "select refresh_token_value, refresh_token_secret_key, access_token_value, access_token_secret_key from spring_sns.token where user_no = ?;";
@@ -75,7 +75,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 getUserByUserId() 기능 처리");
 		  Object[] args = {userId}; 
 		  try {
-			  return jdbcTemplate.queryForObject(USER_GET_BY_USERID, args, new UserRowMapper());
+			  return jdbcTemplate.queryForObject(AWS_USER_GET_BY_USERID, args, new UserRowMapper());
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;
@@ -88,7 +88,7 @@ public class UserDAO {
 //		  jdbcTemplateInstance.getDataSource();
 		  Object[] args = {userNo}; 
 		  try {
-			  return jdbcTemplate.queryForObject(USER_GET_BY_USERNO, args, new UserEntityRowMapper());
+			  return jdbcTemplate.queryForObject(AWS_USER_GET_BY_USERNO, args, new UserEntityRowMapper());
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;
@@ -99,7 +99,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 getUserNameBySearch() 기능 처리");
 		  Object[] args = {query};
 		  try {
-			  return jdbcTemplate.query(SELECT_USER_NAME_BY_SEARCH, args, new UserRowMapper());
+			  return jdbcTemplate.query(AWS_SELECT_USER_NAME_BY_SEARCH, args, new UserRowMapper());
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;
@@ -110,7 +110,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 updateFcmToken() 기능 처리");
 		  Object[] args = {token, userNo};
 		  try {
-			  return jdbcTemplate.update(UPDATE_FCM_TOKEN_BY_USERNO, args);
+			  return jdbcTemplate.update(AWS_UPDATE_FCM_TOKEN_BY_USERNO, args);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
@@ -121,7 +121,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 getFcmTokenByUserNo() 기능 처리");
 		  Object[] args = {userNo};
 		  try {
-			  return jdbcTemplate.queryForObject(SELECT_FCM_TOKEN_BY_USERNO, args, String.class);
+			  return jdbcTemplate.queryForObject(AWS_SELECT_FCM_TOKEN_BY_USERNO, args, String.class);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;
@@ -132,7 +132,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 isFcmTokenByUserNo() 기능 처리");
 		  Object[] args = {userNo};
 		  try {
-			  return jdbcTemplate.queryForObject(IS_FCM_TOKEN_BY_USER_NO, args, Integer.class);
+			  return jdbcTemplate.queryForObject(AWS_IS_FCM_TOKEN_BY_USER_NO, args, Integer.class);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return -1;
@@ -143,7 +143,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 isIssuedTokenByUserNo() 기능 처리");
 		  Object[] args = {userNo};
 		  try {
-			  return jdbcTemplate.queryForObject(IS_TOKEN_BY_USERNO, args, Integer.class);
+			  return jdbcTemplate.queryForObject(AWS_IS_TOKEN_BY_USERNO, args, Integer.class);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return -1;
@@ -154,7 +154,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 getTokenByUserNo() 기능 처리");
 		  Object[] args = {userNo};
 		  try {
-			  return jdbcTemplate.queryForObject(SELECT_TOKEN_BY_USERNO, args, new TokenRowMapper());
+			  return jdbcTemplate.queryForObject(AWS_SELECT_TOKEN_BY_USERNO, args, new TokenRowMapper());
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return null;
@@ -165,7 +165,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 updateRefreshToken() 기능 처리");
 		  Object[] args = {userNo, token, key, userNo};
 		  try {
-			  return jdbcTemplate.update(UPDATE_REFRESH_TOKEN_BY_USERNO, args);
+			  return jdbcTemplate.update(AWS_UPDATE_REFRESH_TOKEN_BY_USERNO, args);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
@@ -176,7 +176,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 deleteRefreshToken() 기능 처리");
 		  Object[] args = {userNo};
 		  try {
-			  return jdbcTemplate.update(DELETE_REFRESH_TOKEN_BY_USERNO, args);
+			  return jdbcTemplate.update(AWS_DELETE_REFRESH_TOKEN_BY_USERNO, args);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
@@ -187,7 +187,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 insertToken() 기능 처리");
 		  Object[] args = {userNo, refreshToken, refreshKey, accessToken, accessKey, fcmToken};
 		  try {
-			  return jdbcTemplate.update(INSERT_TOKEN, args);
+			  return jdbcTemplate.update(AWS_INSERT_TOKEN, args);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
@@ -198,7 +198,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 updateToken() 기능 처리");
 		  Object[] args = {refreshToken, refreshKey, accessToken, accessKey, userNo};
 		  try {
-			  return jdbcTemplate.update(UPDATE_TOKEN, args);
+			  return jdbcTemplate.update(AWS_UPDATE_TOKEN, args);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
@@ -209,7 +209,7 @@ public class UserDAO {
 		  System.out.println("===> Spring JDBC로 updateAccessToken() 기능 처리");
 		  Object[] args = {userNo, token, key, userNo};
 		  try {
-			  return jdbcTemplate.update(UPDATE_ACCESS_TOKEN_BY_USERNO, args);
+			  return jdbcTemplate.update(AWS_UPDATE_ACCESS_TOKEN_BY_USERNO, args);
 		  } catch (Exception e) {
 			 e.printStackTrace();
 			 return 0;
@@ -236,7 +236,7 @@ public class UserDAO {
 		
 		Object[] args = {vo.getUserName(), vo.getUserPassword(), vo.getUserId(), vo.getUserSignupType()};
 		
-		jdbcTemplate.update(USER_INSERT, args);
+		jdbcTemplate.update(AWS_USER_INSERT, args);
 	}
 	
 	class UserRowMapper implements RowMapper<UserVO> {
