@@ -32,8 +32,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+<<<<<<< HEAD
 import com.google.type.Date;
 import com.google.type.DateTime;
+=======
+import com.my.sns.friend.FriendService;
+>>>>>>> feature/dong
 import com.my.sns.security.entity.CustomUserDetails;
 
 import sun.text.resources.FormatData;
@@ -45,6 +49,8 @@ import sun.text.resources.FormatData;
 public class MypageController {
       @Autowired
       PageService service;
+      @Autowired
+      FriendService friendService;
       
       @Autowired
       PageDAO dao;
@@ -266,6 +272,7 @@ public class MypageController {
 				}
 					 return ResponseEntity.ok(vo);
          }
+<<<<<<< HEAD
 				
 	//안드로이드에서 댓글작성한 내용들을 받아 db에 저장하는 코드
 				@RequestMapping(value = "comments/post3",method = RequestMethod.POST,consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -409,3 +416,42 @@ public class MypageController {
 					return ResponseEntity.ok(vo);
          }	
 }
+=======
+			// 상대방	
+			//mysql에서 spring으로 데이터 보내기
+			@RequestMapping(value = "get/gets", method = RequestMethod.GET,produces="application/json; charset=utf-8")
+			@ResponseBody
+			public ResponseEntity<?> user2(Long userNo) {
+				Long myUserNo = 0L;
+				Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				if(principal instanceof CustomUserDetails) {
+					myUserNo = ((CustomUserDetails)principal).getUserNo();
+					if(myUserNo == 0) throw new RuntimeException("principal 객체 가져오기 실패");
+				}
+				 vo = service.getUserNameIntroduction(userNo);
+				 
+				 int result = friendService.isFriendRequestOrFriend(userNo, myUserNo);
+				 if(result == 1) { //친구일 경우
+					 vo.setCode(4600);
+				 }else if(result == 2) { //친구 요청을 받은 경우
+					 vo.setCode(4800);
+				 }else if(result == 3) { // 내가 친구요청을 한 경우
+					 vo.setCode(4700);
+				 }else { // 아무 관계도 아닐 경우
+					 vo.setCode(4900);
+				 }
+				return ResponseEntity.ok(vo);
+			}
+			
+			// 상대방
+			//image_video에서 사진 이름과 피드 번호 가져오기 - 내 프로필 화면 리사이클러뷰 관련
+			//mysql에서 spring으로 데이터 보내기
+			@RequestMapping(value = "gett/gets3", method = RequestMethod.POST,produces="application/json; charset=utf-8")
+			@ResponseBody
+			public ResponseEntity<?> user4(Long userNo){			
+				System.out.println("************안드로이드 내 프로필 사진 불러오기 요청 성공*************");
+					vo = service.getImagenames(userNo);	 
+				return ResponseEntity.ok(vo);
+	        }
+}
+>>>>>>> feature/dong

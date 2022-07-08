@@ -75,8 +75,12 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public List<UserVO> searchUserName(String searchText) {
 		List<UserVO> searchList = userDAO.getUserNameBySearch(searchText);
+		int resultSize = searchList.size();
 		
-		return searchList;
+		if(resultSize != 0)
+			return searchList;
+		else
+			return null;
 	}
 	
 	@Override

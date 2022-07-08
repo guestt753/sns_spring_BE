@@ -13,10 +13,14 @@ public class PageVO {
 	private String username;
 	private String userIntroduce;
 	private String ptoName;
+<<<<<<< HEAD
 	private int feedno;
 	
 	//내 유저 번호 - feed_like에서 가져오는거
 	int userno;
+=======
+	private int feedno; 
+>>>>>>> feature/dong
 	
 	//spring에서 가져오는 내 번호
 	int spring_my_userno;
@@ -35,6 +39,7 @@ public class PageVO {
 	//메인 화면에서 필요한 데이터를 가져오기 위한 리스트
 	List<FeednoimagenameDATA> list = new ArrayList<>();
 	
+<<<<<<< HEAD
 	//메인 화면에서 필요한 데이터를 가져오기 위한 리스트-2
 	List<FeednoimagenameDATA> list2 = new ArrayList<>();
 	
@@ -46,6 +51,18 @@ public class PageVO {
 	
 	
    
+=======
+	/*
+	친구 관계 판별하기위한 코드
+	4900 : 친구가 아님
+	4800 : 친구 요청을 받음
+	4700 : 내가 친구요청을 함
+	4600 : 친구관계			
+	*/
+	private int code;
+	private int numberOfFriend;
+	
+>>>>>>> feature/dong
 
 	public List<FeednoimagenameDATA> getList2() {
 		return list2;
@@ -115,6 +132,19 @@ public class PageVO {
 		return feedno;
 	}
 	
+	public int getCode() {
+		return code;
+	}
+	public void setCode(int code) {
+		this.code = code;
+	}
+	
+	public int getNumberOfFriend() {
+		return numberOfFriend;
+	}
+	public void setNumberOfFriend(int numberOfFriend) {
+		this.numberOfFriend = numberOfFriend;
+	}
 	@Override
 	public String toString() {
 		return "이름: "+ username + "자기소개:"+ userIntroduce+"사진이름:"+ptoName;

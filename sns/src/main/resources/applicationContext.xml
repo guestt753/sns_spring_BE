@@ -24,6 +24,17 @@
 	<property name="dataSource" ref="dataSource"></property>
 </bean>
 
+<!-- Spring과 Mybatis 연동 설정 -->
+<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="dataSource"/>
+	<property name="configLocation" value="classpath:sql-map-config.xml"/>
+</bean>
+
+<!-- SqlSession Template 클래스 bean 등록 -->
+<bean class="org.mybatis.spring.SqlSessionTemplate">
+	<constructor-arg ref="sqlSession"></constructor-arg>
+</bean>
+
 
 <!-- <bean class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
 	<property name="dataSource" ref="dataSource"></property>

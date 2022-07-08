@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,6 +26,8 @@ public class UserDAO {
 	// JDBC 관련 변수
 	@Autowired
 	JdbcTemplate jdbcTemplate;
+	@Autowired
+	private SqlSessionTemplate mybatis;
 //	JdbcTemplate jdbcTemplateInstance;
 //	@Autowired
 //	NamedParameterJdbcTemplate jdbcTemplate;
@@ -227,6 +230,7 @@ public class UserDAO {
 	
 	// 회원 등록
 	public void insertUser(UserVO vo) {
+//<<<<<<< HEAD
 		System.out.println("===> Spring JDBC로 insertUser() 기능 처리");
 		Map<String, Object> map = new HashMap<>();
 		map.put("user_name",vo.getUserName());
@@ -237,6 +241,10 @@ public class UserDAO {
 		Object[] args = {vo.getUserName(), vo.getUserPassword(), vo.getUserId(), vo.getUserSignupType()};
 		
 		jdbcTemplate.update(AWS_USER_INSERT, args);
+//=======
+		System.out.println("===> Mybatis로 insertUser() 기능 처리");
+		mybatis.insert("UserDAO.insertUser", vo);	
+//>>>>>>> feature/dong
 	}
 	
 	class UserRowMapper implements RowMapper<UserVO> {
