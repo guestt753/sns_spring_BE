@@ -30,25 +30,47 @@ public class PageDAO {
     
 	
     //내 프로필 수정 화면 관련 sql문들
-	private final String USER_INSERT = "update spring_sns.user set user_name=?,user_introduction=?,user_image_url=? where user_no=?";
-	private final String USER_NAME_INTRODUCTION = "select user_name,user_introduction,user_image_url from spring_sns.user where user_no=?";
+	private final String USER_INSERT = "update user set user_name=?,user_introduction=?,user_image_url=? where user_no=?";
+	private final String USER_NAME_INTRODUCTION = "select user_name,user_introduction,user_image_url,(select count(user_two_no)from sns.friend where (user_two_no = ?)) as number_of_friend from user where user_no=?;";
 	
 	//게시글 추가 화면 관련 sql문들
 	//피드 텍스트를 feed의 writedata에 넣는다
-	private final String FEED_ADD = "insert into spring_sns.feed(user_no,feed_content,is_now) values(?,?,?)";
+	private final String FEED_ADD = "insert into feed(user_no,feed_content,is_now) values(?,?,?)";
 	//피드 사진들을 image_video에 넣는다
-	private final String FEED_PTOS= "Insert into spring_sns.image_video(feed_no,image_video_url) values(?,?)";
+	private final String FEED_PTOS= "Insert into image_video(feed_no,image_video_url) values(?,?)";
 	// feed 테이블에서 feed_no를 가져온다
-	private final String FEED_NO = "select feed_no from spring_sns.feed where is_now=1 and user_no=?";
+	private final String FEED_NO = "select feed_no from feed where is_now=1 and user_no=?";
 	// feed 테이블에서 feed_no를 가져오고 is_now를 0으로 바꾼다 
-	private final String IS_NOW = "update spring_sns.feed set is_now=0 where feed_no=?";
+	private final String IS_NOW = "update feed set is_now=0 where feed_no=?";
 	// image_video 테이블에서 사진 이름을 피드 번호별로 1개씩 가져오는 코드
-	private final String get_IMAGENAME = "select image_video.feed_no,image_video_url from spring_sns.feed inner join spring_sns.image_video on feed.feed_no "
+	private final String get_IMAGENAME = "select image_video.feed_no,image_video_url from feed inner join image_video on feed.feed_no "
 			+ "= image_video.feed_no where feed.user_no=?"; 
 	
 	//메인 화면에서 필요한   1.피드 번호,2.사진들,3.피드 추가시 작성한 코멘트 4.내 이름, 5.내 프로필 사진 가져오기
-	private final String MAINNEED = "select image_video.feed_no,image_video_url,feed.feed_content,(select user_name from spring_sns.user where user_no=?) as user_name,(select user_image_url from spring_sns.user where user_no=?) as user_image_url from spring_sns.feed"
-			+ " inner join spring_sns.image_video on feed.feed_no = image_video.feed_no where feed.user_no=?";
+	private final String MAINNEED = "select image_video.feed_no,image_video_url,feed.feed_content,(select user_name from user where user_no=?) as user_name,(select user_image_url from user where user_no=?) as user_image_url from feed"
+			+ " inner join image_video on feed.feed_no = image_video.feed_no where feed.user_no=?";
+	
+	//AWS 전용 SQL구문
+	//내 프로필 수정 화면 관련 sql문들
+		private final String AWS_USER_INSERT = "update spring_sns.user set user_name=?,user_introduction=?,user_image_url=? where user_no=?";
+		private final String AWS_USER_NAME_INTRODUCTION = "select user_name,user_introduction,user_image_url from spring_sns.user where user_no=?";
+		
+		//게시글 추가 화면 관련 sql문들
+		//피드 텍스트를 feed의 writedata에 넣는다
+		private final String AWS_FEED_ADD = "insert into spring_sns.feed(user_no,feed_content,is_now) values(?,?,?)";
+		//피드 사진들을 image_video에 넣는다
+		private final String AWS_FEED_PTOS= "Insert into spring_sns.image_video(feed_no,image_video_url) values(?,?)";
+		// feed 테이블에서 feed_no를 가져온다
+		private final String AWS_FEED_NO = "select feed_no from spring_sns.feed where is_now=1 and user_no=?";
+		// feed 테이블에서 feed_no를 가져오고 is_now를 0으로 바꾼다 
+		private final String AWS_IS_NOW = "update spring_sns.feed set is_now=0 where feed_no=?";
+		// image_video 테이블에서 사진 이름을 피드 번호별로 1개씩 가져오는 코드
+		private final String AWS_get_IMAGENAME = "select image_video.feed_no,image_video_url from spring_sns.feed inner join spring_sns.image_video on feed.feed_no "
+				+ "= image_video.feed_no where feed.user_no=?"; 
+		
+		//메인 화면에서 필요한   1.피드 번호,2.사진들,3.피드 추가시 작성한 코멘트 4.내 이름, 5.내 프로필 사진 가져오기
+		private final String AWS_MAINNEED = "select image_video.feed_no,image_video_url,feed.feed_content,(select user_name from spring_sns.user where user_no=?) as user_name,(select user_image_url from spring_sns.user where user_no=?) as user_image_url from spring_sns.feed"
+				+ " inner join spring_sns.image_video on feed.feed_no = image_video.feed_no where feed.user_no=?";
 	
 	
 	
@@ -68,7 +90,7 @@ public class PageDAO {
 	//db에서 데이터 가져오기 (내 프로필 편집 화면에서 보낸 데이터들)
 	public PageVO getUserNameIntroduction(Long userNo) {
 		System.out.println("ID를 확인후 사용자 이름과 자기 소개 가져오기");
-		Object[] args = {userNo};
+		Object[] args = {userNo, userNo};
 		try {
 			return jdbcTemplate.queryForObject(USER_NAME_INTRODUCTION,args,new UserNameMapper());
 		}catch(Exception e) {
@@ -85,6 +107,7 @@ public class PageDAO {
 			pagevo.setUsername(rs.getString("user_name"));
 			pagevo.setUserIntroduce(rs.getString("user_introduction"));
 			pagevo.setPtoname(rs.getString("user_image_url"));
+			pagevo.setNumberOfFriend(rs.getInt("number_of_friend"));
 			
 			System.out.println("안드로이드로 보낼 데이터 클래스 저장 여부 확인 -> 이름:"+rs.getString("user_name"));
 			System.out.println("안드로이드로 보낼 데이터 클래스 저장 여부 확인 -> 소개:"+rs.getString("user_introduction"));

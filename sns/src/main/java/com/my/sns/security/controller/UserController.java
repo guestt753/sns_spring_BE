@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -155,10 +156,6 @@ public class UserController {
 			
 			friendRequestListEntities = friendService.getFriendRequestList(userNo);
 			
-	        for(FriendRequestListEntity entity : friendRequestListEntities) {
-	            list.add(new RequestResponse.FriendRequestListEntity(entity.getUserNo(), entity.getUserName(), entity.getUserImageUrl()));
-	        }
-			
 			if(friendRequestListEntities == null) {
 				message = "사용자가 받은 친구 요청 목록이 없습니다.";
 				code = 4900;
@@ -168,6 +165,10 @@ public class UserController {
 				requestResponse.setTokenDTO(tokenDTO);
 				return ResponseEntity.ok(requestResponse);
 			}
+			
+			for(FriendRequestListEntity entity : friendRequestListEntities) {
+	            list.add(new RequestResponse.FriendRequestListEntity(entity.getUserNo(), entity.getUserName(), entity.getUserImageUrl()));
+	        }
 			
 			message = "조회 성공";
 			code = 4700;
@@ -213,24 +214,6 @@ public class UserController {
 			friendList = friendService.getFriendList(userNo, userNo);
 			System.out.println(searchList + " " + friendList);
 			
-	        for(UserVO entity : searchList) {
-	        	if(entity.getUserNo() == userNo) { //검색결과 자신일 경우 맨 위에 결과가 뜨게금 설정
-	        		searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(),entity.getUserName(),entity.getUserImageUrl()));
-	        		continue;
-	        	}
-	        	for(FriendListEntity list : friendList) {
-	        		if(entity.getUserNo() == list.getUserOneNo()) { //검색 결과가 친구 일 경우
-	        			searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(), entity.getUserName(), "친구" ,entity.getUserImageUrl()));
-	        			isadded = 1;
-	        			break;
-	        		}
-	        	}
-	        	if(isadded == 0) {
-	        		searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(), entity.getUserName(),entity.getUserImageUrl()));
-	        	}
-	        	isadded = 0;
-	        }
-			
 	        //검색 결과가 없을 경우
 			if(searchList == null) { 
 				message = "사용자가 받은 친구 요청 목록을 찾을 수 없습니다.";
@@ -241,12 +224,29 @@ public class UserController {
 				requestResponse.setTokenDTO(tokenDTO);
 				return ResponseEntity.ok(requestResponse);
 			} else {
-			message = "조회 성공";
-			code = 4700;
-			requestResponse.setMessage(message);
-			requestResponse.setCode(code);
-			requestResponse.setSearchListEntity(searchListEntities);
-			requestResponse.setTokenDTO(tokenDTO);
+				for(UserVO entity : searchList) {
+		        	if(entity.getUserNo() == userNo) { //검색결과 자신일 경우 맨 위에 결과가 뜨게금 설정
+		        		searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(),entity.getUserName(), "나" ,entity.getUserImageUrl()));
+		        		continue;
+		        	}
+		        	for(FriendListEntity list : friendList) {
+		        		if(entity.getUserNo() == list.getUserNo()) { //검색 결과가 친구 일 경우
+		        			searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(), entity.getUserName(), "친구" ,entity.getUserImageUrl()));
+		        			isadded = 1;
+		        			break;
+		        		}
+		        	}
+		        	if(isadded == 0) {
+		        		searchListEntities.add(new RequestResponse.SearchListEntity(entity.getUserNo(), entity.getUserName(),entity.getUserImageUrl()));
+		        	}
+		        	isadded = 0;
+		        }	
+				message = "조회 성공";
+				code = 4700;
+				requestResponse.setMessage(message);
+				requestResponse.setCode(code);
+				requestResponse.setSearchListEntity(searchListEntities);
+				requestResponse.setTokenDTO(tokenDTO);
 			}
 		}
 		else {
@@ -263,7 +263,7 @@ public class UserController {
 	
 	@ResponseBody
 	@RequestMapping(value="actionFriendRequest.do/posts", method=RequestMethod.POST, produces="application/json; charset=utf-8")
-	public ResponseEntity<?> actionFriendRequest(Long requestedUserNo, int type) {
+	public ResponseEntity<?> responseFriendAction(Long requestedUserNo, int type) {
 		int result;
 		TokenDTO tokenDTO = new TokenDTO();
 		System.out.println("::::::::Action_Friend_Request:::::::::");
@@ -309,5 +309,151 @@ public class UserController {
 		System.out.println(ResponseEntity.ok(requestResponse));
 		System.out.println(requestResponse.getCode() + " " + requestResponse.getFriendRequestListEntity() + " " + requestResponse.toString());
 		return ResponseEntity.ok(requestResponse);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="post/friend/request", method=RequestMethod.POST, produces="application/json; charset=utf-8")
+	public ResponseEntity<?> requestFriendAction(Long userNo, int type) {
+		Long myUserNo = 0L;
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(principal instanceof CustomUserDetails) {
+			myUserNo = ((CustomUserDetails)principal).getUserNo();
+		}
+		
+		boolean resutl = friendService.friendRequestAction(myUserNo, userNo, type);
+		
+		if(resutl) {
+			message = "add Friend Action success.";
+			code = 4700;
+			requestResponse.setMessage(message);
+			requestResponse.setCode(code);
+			return ResponseEntity.ok(requestResponse);
+		} else {
+			message = "add Friend Action failed.";
+			code = 5100;
+			requestResponse.setMessage(message);
+			requestResponse.setCode(code);
+			return ResponseEntity.ok(requestResponse);
+		}
+		
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="GET/friends/all", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	public ResponseEntity<?> getFriendList() {
+		Long userNo = 0L;
+		List<FriendListEntity> friendList = new ArrayList<FriendListEntity>();
+		List<RequestResponse.FriendListEntity> friendListEntities = new ArrayList<RequestResponse.FriendListEntity>();
+		System.out.println("::::::::Get_Friend_List:::::::::");
+		
+//		// 재발급된 토큰들...(갱신x도 포함)
+//		TokenDTO tokenDTO = new TokenDTO();
+//		tokenDTO = reissue.setTokenObject();
+		
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(principal instanceof CustomUserDetails) {
+			userNo = ((CustomUserDetails)principal).getUserNo();
+			System.out.println("userNo : " + userNo);
+		}
+	
+		friendList = friendService.getFriendList(userNo, userNo);
+		System.out.println(friendList);
+		
+		if(friendList == null) { 
+			message = "사용자의 친구  목록을 찾을 수 없습니다.";
+			code = 4900;
+			requestResponse.setMessage(message);
+			requestResponse.setCode(code);
+			return ResponseEntity.ok(requestResponse);
+		} else {
+			int count = 0;
+			for(FriendListEntity entity : friendList) {
+				System.out.println("add된 친구 : " + entity.getUserName());
+				friendListEntities.add(new RequestResponse.FriendListEntity(entity.getUserNo(), entity.getUserName(),entity.getUserImageUrl(), entity.getFriendStatus()));
+				count++;
+       		}
+			message = "조회 성공";
+			code = 4700;
+			requestResponse.setMessage(message);
+			requestResponse.setCode(code);
+			requestResponse.setNumberOfFriend(count);
+			requestResponse.setFriendList(friendListEntities);
+			return ResponseEntity.ok(requestResponse);
+       	}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="GET/friends/name", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	public ResponseEntity<?> getFriendSearchList(String searchText) {
+		Long userNo = 0L;
+		List<FriendListEntity> friendList = new ArrayList<FriendListEntity>();
+		List<FriendListEntity> searchList = new ArrayList<FriendListEntity>();
+		List<RequestResponse.FriendListEntity> friendListEntities = new ArrayList<RequestResponse.FriendListEntity>();
+		System.out.println("::::::::Get_Friend_Search_List:::::::::");
+		System.out.println(searchText);
+		
+//		// 재발급된 토큰들...(갱신x도 포함)
+//		TokenDTO tokenDTO = new TokenDTO();
+//		tokenDTO = reissue.setTokenObject();
+		
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(principal instanceof CustomUserDetails) {
+			userNo = ((CustomUserDetails)principal).getUserNo();
+			System.out.println("userNo : " + userNo);
+		}
+			
+//		List<UserVO> searchList = new ArrayList<UserVO>();
+//		searchList = userService.searchUserName(searchText);
+		friendList = friendService.getFriendList(userNo, userNo);
+		System.out.println(friendList);
+		searchList = friendService.searchFriend(friendList, searchText);
+		
+		if(searchList == null) { 
+			message = "사용자의 친구  목록을 찾을 수 없습니다.";
+			code = 4900;
+			requestResponse.setMessage(message);
+			requestResponse.setCode(code);
+			return ResponseEntity.ok(requestResponse);
+		} else {
+			for(FriendListEntity entity : searchList) {
+				friendListEntities.add(new RequestResponse.FriendListEntity(entity.getUserNo(), entity.getUserName(),entity.getUserImageUrl(), entity.getFriendStatus()));
+       		}
+			message = "조회 성공";
+			code = 4700;
+			requestResponse.setMessage(message);
+			requestResponse.setCode(code);
+			requestResponse.setFriendList(friendListEntities);
+			return ResponseEntity.ok(requestResponse);
+       	}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="DELETE/friends/{userNo}", method=RequestMethod.DELETE, produces="application/json; charset=utf-8")
+	public ResponseEntity<?> deleteFriend(@PathVariable("userNo")Long userNo) {
+		Long myUserNo = 0L;
+		System.out.println("::::::::DELETE_Friend:::::::::");
+		System.out.println(userNo);
+		
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(principal instanceof CustomUserDetails) {
+			myUserNo = ((CustomUserDetails)principal).getUserNo();
+			System.out.println("myUserNo : " + myUserNo);
+		}
+		
+		boolean result = friendService.deleteFriend(myUserNo, userNo);
+		
+		if (!result) {
+			message = "요청 실패";
+			code = 4900;
+			requestResponse.setMessage(message);
+			requestResponse.setCode(code);
+			return ResponseEntity.ok(requestResponse);
+		}else {
+			message = "요청 성공";
+			code = 4700;
+			requestResponse.setMessage(message);
+			requestResponse.setCode(code);
+			return ResponseEntity.ok(requestResponse);
+		}
 	}
 }
